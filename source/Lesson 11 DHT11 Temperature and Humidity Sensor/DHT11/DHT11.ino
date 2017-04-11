@@ -3,7 +3,7 @@
 
 #include <SimpleDHT.h>
 
-// for DHT11, 
+// for DHT11,
 //      VCC: 5V or 3V
 //      GND: GND
 //      DATA: 2
@@ -12,35 +12,47 @@ SimpleDHT11 dht11;
 
 void setup() {
   Serial.begin(9600);
+
+  Serial.print("Celcius"); Serial.print("\t\t");
+  Serial.print("Fahrenheit"); Serial.print("\t");
+  Serial.print("Kelvin"); Serial.print("\t\t");
+  Serial.print("Humidity"); Serial.print("\t");
+  Serial.print("Raw Data");
+  Serial.println("");
 }
 
 void loop() {
-  // start working...
-  Serial.println("=================================");
-  Serial.println("Sample DHT11...");
-  
   // read with raw sample data.
-  byte temperature = 0;
-  byte humidity = 0;
+  byte rawTemperature = 0;
+  byte rawHumidity = 0;
   byte data[40] = {0};
-  if (dht11.read(pinDHT11, &temperature, &humidity, data)) {
+
+  if (dht11.read(pinDHT11, &rawTemperature, &rawHumidity, data)) {
     Serial.print("Read DHT11 failed");
     return;
   }
+
+  int temperature = (int) rawTemperature;
+  int humidity = (int) rawHumidity;
+
+  int celcius = temperature;
+  float fahrenheit = (celcius * 9 / 5) + 32;
+  float kelvin = ((float) celcius) + 273.15;
+
+  Serial.print(celcius); Serial.print("\t\t");
+  Serial.print(fahrenheit); Serial.print("\t\t");
+  Serial.print(kelvin); Serial.print("\t\t");
+  Serial.print(humidity); Serial.print("\t\t");
   
-  Serial.print("Sample RAW Bits: ");
+  //raw data output
   for (int i = 0; i < 40; i++) {
     Serial.print((int)data[i]);
     if (i > 0 && ((i + 1) % 4) == 0) {
-      Serial.print(' ');
+      Serial.print(' '); //output each four set of bits
     }
   }
   Serial.println("");
   
-  Serial.print("Sample OK: ");
-  Serial.print((int)temperature); Serial.print(" *C, ");
-  Serial.print((int)humidity); Serial.println(" %");
-  
   // DHT11 sampling rate is 1HZ.
-  delay(1000);
+  delay(1000 * 5);
 }
