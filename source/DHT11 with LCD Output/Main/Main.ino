@@ -33,6 +33,8 @@ void setup() {
 
 void loop() {
   stepPrimary(4, 25);
+  stepSecondary(4, 25);
+  stepTertiary(4, 25);
   
   lcd.setCursor(0, 1);
   lcd.print(millis() / 1000);
@@ -55,9 +57,19 @@ void output(int red, int green, int blue) {
 }
 
 void stepPrimary(int stepCount, int delayTime) {
-  stepRGB(R, x, x, stepCount, delayTime);
-  stepRGB(x, G, x, stepCount, delayTime);
-  stepRGB(x, x, B, stepCount, delayTime);
+  stepRGB(R, x, x, stepCount, delayTime); // red
+  stepRGB(x, G, x, stepCount, delayTime); // green
+  stepRGB(x, x, B, stepCount, delayTime); // blue
+}
+
+void stepSecondary(int stepCount, int delayTime) {
+  stepRGB(R, G, x, stepCount, delayTime); // yellow
+  stepRGB(x, G, B, stepCount, delayTime); // cyan
+  stepRGB(R, x, B, stepCount, delayTime); // magenta
+}
+
+void stepTertiary(int stepCount, int delayTime) {
+  stepRGB(R, G, B, stepCount, delayTime); // white  
 }
 
 void stepRGB(bool rFlag, bool gFlag, bool bFlag, int stepCount, int delayTime) {
