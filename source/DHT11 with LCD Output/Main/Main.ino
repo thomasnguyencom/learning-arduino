@@ -32,15 +32,24 @@ void setup() {
 }
 
 void loop() {
-  stepPrimary(4, 25);
-  stepSecondary(4, 25);
-  stepTertiary(4, 25);
+  int stepCount = 4;
+  int delayTime = 25;
+
+  stepRGB("red    ", R, x, x, stepCount, delayTime);
+  stepRGB("green  ", x, G, x, stepCount, delayTime);
+  stepRGB("blue   ", x, x, B, stepCount, delayTime);
   
+  stepRGB("yellow ", R, G, x, stepCount, delayTime);
+  stepRGB("cyan   ", x, G, B, stepCount, delayTime);
+  stepRGB("magenta", R, x, B, stepCount, delayTime);
+  
+  stepRGB("white  ", R, G, B, stepCount, delayTime);
+
   lcd.setCursor(0, 1);
   lcd.print(millis() / 1000);
 }
 
-void output(int red, int green, int blue) {
+void output(String color, int red, int green, int blue) {
   analogWrite(RED, red);
   analogWrite(GREEN, green);
   analogWrite(BLUE, blue);
@@ -53,32 +62,17 @@ void output(int red, int green, int blue) {
   String fullHex = toHex(red, green, blue);
   
   lcd.setCursor(0, 1);
-  lcd.print(fullHex);
+  lcd.print(fullHex); lcd.print(" "); lcd.print(color);
 }
 
-void stepPrimary(int stepCount, int delayTime) {
-  stepRGB(R, x, x, stepCount, delayTime); // red
-  stepRGB(x, G, x, stepCount, delayTime); // green
-  stepRGB(x, x, B, stepCount, delayTime); // blue
-}
-
-void stepSecondary(int stepCount, int delayTime) {
-  stepRGB(R, G, x, stepCount, delayTime); // yellow
-  stepRGB(x, G, B, stepCount, delayTime); // cyan
-  stepRGB(R, x, B, stepCount, delayTime); // magenta
-}
-
-void stepTertiary(int stepCount, int delayTime) {
-  stepRGB(R, G, B, stepCount, delayTime); // white  
-}
-
-void stepRGB(bool rFlag, bool gFlag, bool bFlag, int stepCount, int delayTime) {
-  // RGB LED OUTPUT
+void stepRGB(String color, bool rFlag, bool gFlag, bool bFlag, int stepCount, int delayTime) {
+  // Reset RGB LED output
   int redValue = 0;
   int greenValue = 0;
   int blueValue = 0;
+
   for(int i = 0; i < 255; i += stepCount) {
-    output(redValue, greenValue, blueValue);
+    output(color, redValue, greenValue, blueValue);
 
     if(rFlag) redValue += stepCount;
     if(gFlag) greenValue += stepCount;
