@@ -1,44 +1,5 @@
-//www.elegoo.com
-//2016.12.9
-
-/*
-  LiquidCrystal Library - Hello World
-
- Demonstrates the use a 16x2 LCD display.  The LiquidCrystal
- library works with all LCD displays that are compatible with the
- Hitachi HD44780 driver. There are many of them out there, and you
- can usually tell them by the 16-pin interface.
-
- This sketch prints "Hello World!" to the LCD
- and shows the time.
-
-  The circuit:
- * LCD RS pin to digital pin 7
- * LCD Enable pin to digital pin 8
- * LCD D4 pin to digital pin 9
- * LCD D5 pin to digital pin 10
- * LCD D6 pin to digital pin 11
- * LCD D7 pin to digital pin 12
- * LCD R/W pin to ground
- * LCD VSS pin to ground
- * LCD VCC pin to 5V
- * 10K resistor:
- * ends to +5V and ground
- * wiper to LCD VO pin (pin 3)
-
- Library originally added 18 Apr 2008
- by David A. Mellis
- library modified 5 Jul 2009
- by Limor Fried (http://www.ladyada.net)
- example added 9 Jul 2009
- by Tom Igoe
- modified 22 Nov 2010
- by Tom Igoe
-
- This example code is in the public domain.
-
- http://www.arduino.cc/en/Tutorial/LiquidCrystal
- */
+// Author: Thomas Nguyen
+//
 
 // include the library code:
 #include <LiquidCrystal.h>
@@ -46,18 +7,112 @@
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
+// RGB LED Pins
+#define BLUE 3
+#define GREEN 5
+#define RED 6
+
 void setup() {
-  // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
-  // Print a message to the LCD.
-  lcd.print("Hello, World!");
+  //lcd.print("Hello, World!");
+
+  // setup RGB LED
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(BLUE, OUTPUT);
+  
+  digitalWrite(RED, HIGH);
+  digitalWrite(GREEN, LOW);
+  digitalWrite(BLUE, LOW);
 }
 
+// RGB LED variables
+int redValue = 0;
+int greenValue = 0;
+int blueValue = 0;
+
 void loop() {
-  // set the cursor to column 0, line 1
-  // (note: line 1 is the second row, since counting begins with 0):
+  stepPrimary(4, 25);
+  
   lcd.setCursor(0, 1);
-  // print the number of seconds since reset:
   lcd.print(millis() / 1000);
+}
+
+void output(int red, int green, int blue) {
+  analogWrite(RED, red);
+  analogWrite(GREEN, green);
+  analogWrite(BLUE, blue);
+
+  lcd.setCursor(0, 0);
+  lcd.print("R:"); lcd.print(red); lcd.print(" ");
+  lcd.print("G:"); lcd.print(green); lcd.print(" ");
+  lcd.print("B:"); lcd.print(blue); lcd.print(" ");
+
+  String fullHex = "#";
+  fullHex += toHex(red);
+  fullHex += toHex(green);
+  fullHex += toHex(blue);
+  
+  lcd.setCursor(0, 1);
+  lcd.print(fullHex);
+}
+
+String toHex(int colorValue) {
+  int h1 = int(colorValue / 16);
+  int h2 = colorValue - (h1 * 16);
+
+  String hex = "";
+  hex += String(h1, HEX);
+  hex += String(h2, HEX);
+
+  return hex;
+}
+
+void stepPrimary(int stepCount, int delayTime) {
+  stepRed(stepCount, delayTime);
+  stepGreen(stepCount, delayTime);
+  stepBlue(stepCount, delayTime);
+}
+
+void stepRed(int stepCount, int delayTime) {
+  // RGB LED OUTPUT
+  redValue = 0;
+  greenValue = 0;
+  blueValue = 0;
+  for(int i = 0; i < 255; i += stepCount) {
+    output(redValue, greenValue, blueValue);
+            
+    redValue += stepCount;
+    
+    delay(delayTime);
+  }
+}
+
+void stepGreen(int stepCount, int delayTime) {
+  // RGB LED OUTPUT
+  redValue = 0;
+  greenValue = 0;
+  blueValue = 0;
+  for(int i = 0; i < 255; i += stepCount) {
+    output(redValue, greenValue, blueValue);
+            
+    greenValue += stepCount;
+    
+    delay(delayTime);
+  }
+}
+
+void stepBlue(int stepCount, int delayTime) {
+  // RGB LED OUTPUT
+  redValue = 0;
+  greenValue = 0;
+  blueValue = 0;
+  for(int i = 0; i < 255; i += stepCount) {
+    output(redValue, greenValue, blueValue);
+            
+    blueValue += stepCount;
+    
+    delay(delayTime);
+  }
 }
 

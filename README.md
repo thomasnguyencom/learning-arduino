@@ -6,7 +6,7 @@ Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was o
 * [Elegoo 37-in-1 Sensor Module Kit](https://www.amazon.com/gp/product/B009OVGKTQ/) - **$26.99**
 
 # Hardware Inventory
-Marking what I have actually implemented
+Marking what I have actually playred around with
 
 ## Elegoo UNO Project Super Starter Kit Inventory
  -  [ ]  1 x UNO R3 Controller Board 
