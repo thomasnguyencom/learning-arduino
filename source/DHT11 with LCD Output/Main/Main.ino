@@ -12,11 +12,6 @@ LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 #define GREEN 5
 #define RED 6
 
-#define R true
-#define G true
-#define B true
-#define x false
-
 void setup() {
   lcd.begin(16, 2);
   //lcd.print("Hello, World!");
@@ -32,6 +27,12 @@ void setup() {
 }
 
 void loop() {
+  // color flags
+  int R = true;
+  int G = true;
+  int B = true;
+  int x = false;
+
   int stepCount = 4;
   int delayTime = 25;
 
@@ -55,9 +56,9 @@ void output(String color, int red, int green, int blue) {
   analogWrite(BLUE, blue);
 
   lcd.setCursor(0, 0);
-  lcd.print("R:"); lcd.print(red); lcd.print(" ");
-  lcd.print("G:"); lcd.print(green); lcd.print(" ");
-  lcd.print("B:"); lcd.print(blue); lcd.print(" ");
+  lcd.print("R"); lcd.print(red); lcd.print(" ");
+  lcd.print("G"); lcd.print(green); lcd.print(" ");
+  lcd.print("B"); lcd.print(blue); lcd.print(" ");
 
   String fullHex = toHex(red, green, blue);
   
