@@ -12,6 +12,11 @@ LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 #define GREEN 5
 #define RED 6
 
+#define R true
+#define G true
+#define B true
+#define x false
+
 void setup() {
   lcd.begin(16, 2);
   //lcd.print("Hello, World!");
@@ -25,11 +30,6 @@ void setup() {
   digitalWrite(GREEN, LOW);
   digitalWrite(BLUE, LOW);
 }
-
-// RGB LED variables
-int redValue = 0;
-int greenValue = 0;
-int blueValue = 0;
 
 void loop() {
   stepPrimary(4, 25);
@@ -48,13 +48,45 @@ void output(int red, int green, int blue) {
   lcd.print("G:"); lcd.print(green); lcd.print(" ");
   lcd.print("B:"); lcd.print(blue); lcd.print(" ");
 
-  String fullHex = "#";
-  fullHex += toHex(red);
-  fullHex += toHex(green);
-  fullHex += toHex(blue);
+  String fullHex = toHex(red, green, blue);
   
   lcd.setCursor(0, 1);
   lcd.print(fullHex);
+}
+
+void stepPrimary(int stepCount, int delayTime) {
+  stepRGB(R, x, x, stepCount, delayTime);
+  stepRGB(x, G, x, stepCount, delayTime);
+  stepRGB(x, x, B, stepCount, delayTime);
+}
+
+void stepRGB(bool rFlag, bool gFlag, bool bFlag, int stepCount, int delayTime) {
+  // RGB LED OUTPUT
+  int redValue = 0;
+  int greenValue = 0;
+  int blueValue = 0;
+  for(int i = 0; i < 255; i += stepCount) {
+    output(redValue, greenValue, blueValue);
+
+    if(rFlag) redValue += stepCount;
+    if(gFlag) greenValue += stepCount;
+    if(bFlag) blueValue += stepCount;
+    
+    delay(delayTime);
+  }
+}
+
+String toRGB(int redValue, int greenValue, int blueValue) {
+  String rgb = "";
+
+  rgb += "R:";
+  rgb += redValue;
+  rgb += "G:";
+  rgb += greenValue;
+  rgb += "B:";
+  rgb += blueValue;
+
+  return rgb;
 }
 
 String toHex(int colorValue) {
@@ -68,51 +100,12 @@ String toHex(int colorValue) {
   return hex;
 }
 
-void stepPrimary(int stepCount, int delayTime) {
-  stepRed(stepCount, delayTime);
-  stepGreen(stepCount, delayTime);
-  stepBlue(stepCount, delayTime);
-}
+String toHex(int redValue, int greenValue, int blueValue) {
+  String fullHex = "#";
+  
+  fullHex += toHex(redValue);
+  fullHex += toHex(greenValue);
+  fullHex += toHex(blueValue);
 
-void stepRed(int stepCount, int delayTime) {
-  // RGB LED OUTPUT
-  redValue = 0;
-  greenValue = 0;
-  blueValue = 0;
-  for(int i = 0; i < 255; i += stepCount) {
-    output(redValue, greenValue, blueValue);
-            
-    redValue += stepCount;
-    
-    delay(delayTime);
-  }
+  return fullHex;
 }
-
-void stepGreen(int stepCount, int delayTime) {
-  // RGB LED OUTPUT
-  redValue = 0;
-  greenValue = 0;
-  blueValue = 0;
-  for(int i = 0; i < 255; i += stepCount) {
-    output(redValue, greenValue, blueValue);
-            
-    greenValue += stepCount;
-    
-    delay(delayTime);
-  }
-}
-
-void stepBlue(int stepCount, int delayTime) {
-  // RGB LED OUTPUT
-  redValue = 0;
-  greenValue = 0;
-  blueValue = 0;
-  for(int i = 0; i < 255; i += stepCount) {
-    output(redValue, greenValue, blueValue);
-            
-    blueValue += stepCount;
-    
-    delay(delayTime);
-  }
-}
-
