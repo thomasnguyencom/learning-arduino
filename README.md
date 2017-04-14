@@ -1,4 +1,4 @@
-# elegoo
+# learning-arduino
 Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was on sale at Amazon (November 23, 2016), why not.
 
 # Hardware Details
