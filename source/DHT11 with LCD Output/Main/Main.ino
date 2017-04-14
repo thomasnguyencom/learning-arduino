@@ -12,15 +12,18 @@ LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 #define GREEN 5
 #define RED 6
 
-void setup() {
-  lcd.begin(16, 2);
-  //lcd.print("Hello, World!");
+// 
+int stepCount = 4;
+  int delayTime = 25;
 
-  // setup RGB LED
+void setup() {
+  // LCD columns, lines initialization
+  lcd.begin(16, 2);
+
+  // setup RGB LED pins
   pinMode(RED, OUTPUT);
   pinMode(GREEN, OUTPUT);
-  pinMode(BLUE, OUTPUT);
-  
+  pinMode(BLUE, OUTPUT);  
   digitalWrite(RED, HIGH);
   digitalWrite(GREEN, LOW);
   digitalWrite(BLUE, LOW);
@@ -33,37 +36,15 @@ void loop() {
   int B = true;
   int x = false;
 
-  int stepCount = 4;
-  int delayTime = 25;
-
-  stepRGB("red    ", R, x, x, stepCount, delayTime);
-  stepRGB("green  ", x, G, x, stepCount, delayTime);
-  stepRGB("blue   ", x, x, B, stepCount, delayTime);
+  stepRGB("red     ", R, x, x, stepCount, delayTime);
+  stepRGB("green   ", x, G, x, stepCount, delayTime);
+  stepRGB("blue    ", x, x, B, stepCount, delayTime);
   
-  stepRGB("yellow ", R, G, x, stepCount, delayTime);
-  stepRGB("cyan   ", x, G, B, stepCount, delayTime);
-  stepRGB("magenta", R, x, B, stepCount, delayTime);
+  stepRGB("yellow  ", R, G, x, stepCount, delayTime); // red + green
+  stepRGB("cyan    ", x, G, B, stepCount, delayTime); // green + blue
+  stepRGB("magenta ", R, x, B, stepCount, delayTime); // red + blue
   
-  stepRGB("white  ", R, G, B, stepCount, delayTime);
-
-  lcd.setCursor(0, 1);
-  lcd.print(millis() / 1000);
-}
-
-void output(String color, int red, int green, int blue) {
-  analogWrite(RED, red);
-  analogWrite(GREEN, green);
-  analogWrite(BLUE, blue);
-
-  lcd.setCursor(0, 0);
-  lcd.print("R"); lcd.print(red); lcd.print(" ");
-  lcd.print("G"); lcd.print(green); lcd.print(" ");
-  lcd.print("B"); lcd.print(blue); lcd.print(" ");
-
-  String fullHex = toHex(red, green, blue);
-  
-  lcd.setCursor(0, 1);
-  lcd.print(fullHex); lcd.print(" "); lcd.print(color);
+  stepRGB("white   ", R, G, B, stepCount, delayTime);
 }
 
 void stepRGB(String color, bool rFlag, bool gFlag, bool bFlag, int stepCount, int delayTime) {
@@ -81,6 +62,24 @@ void stepRGB(String color, bool rFlag, bool gFlag, bool bFlag, int stepCount, in
     
     delay(delayTime);
   }
+}
+
+void output(String color, int red, int green, int blue) {
+  analogWrite(RED, red);
+  analogWrite(GREEN, green);
+  analogWrite(BLUE, blue);
+
+  lcd.clear();
+
+  lcd.setCursor(0, 0);
+  lcd.print("R"); lcd.print(red); lcd.print(" ");
+  lcd.print("G"); lcd.print(green); lcd.print(" ");
+  lcd.print("B"); lcd.print(blue); lcd.print(" ");
+
+  String fullHex = toHex(red, green, blue);
+  
+  lcd.setCursor(0, 1);  
+  lcd.print(fullHex); lcd.print(" "); lcd.print(color);
 }
 
 String toRGB(int redValue, int greenValue, int blueValue) {
