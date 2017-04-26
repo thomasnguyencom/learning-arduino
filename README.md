@@ -1,14 +1,37 @@
 # learning-arduino
 Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was on sale at Amazon (November 23, 2016), why not.
 
-# Hardware Details
+# Elegoo UNO Project Super Starter Kit
 * [Elegoo UNO Project Super Starter Kit](https://www.amazon.com/gp/product/B01D8KOZF4/) - **$31.99**
-* [Elegoo 37-in-1 Sensor Module Kit](https://www.amazon.com/gp/product/B009OVGKTQ/) - **$26.99**
 
-# Hardware Inventory
-Marking what I have actually playred around with
+## Lessons
+ - [ ] Lesson 0 Installing IDE
+ - [ ] Lesson 1 Add Libraries and Open Serial Monitor
+ - [ ] Lesson 2 Blink
+ - [ ] Lesson 3 LED
+ - [ ] Lesson 4 RGB LED
+ - [ ] Lesson 5 Digital Inputs
+ - [ ] Lesson 6 Making Sounds
+ - [ ] Lesson 7 Passive Buzzer
+ - [ ] Lesson 8 Ball Switch
+ - [ ] Lesson 9 Servo
+ - [ ] Lesson 10 Ultrasonic Sensor Module
+ - [ ] Lesson 11 DHT11 Temperature and Humidity Sensor
+ - [ ] Lesson 12 Analog Joystick Module
+ - [ ] Lesson 13 IR Receiver Module
+ - [ ] Lesson 14 LCD Display
+ - [ ] Lesson 15 Thermometer
+ - [ ] Lesson 16 Eight LED with 74HC595
+ - [ ] Lesson 17 The Serial Monitor
+ - [ ] Lesson 18 Photocell
+ - [ ] Lesson 19 74HC595 And Segment Display
+ - [ ] Lesson 20 Four Digital Seven Segment Display
+ - [ ] Lesson 21 DC Motors
+ - [ ] Lesson 22 Relay
+ - [ ] Lesson 23 Stepper Motor
+ - [ ] Lesson 24 Controlling Stepper Motor With Remote
 
-## Elegoo UNO Project Super Starter Kit Inventory
+## Inventory
  -  [ ]  1 x UNO R3 Controller Board 
  -  [ ]  1 x LCD1602 Module ( with pin header) 
  -  [ ]  1 x Breadboard Expansion Board 
@@ -45,7 +68,10 @@ Marking what I have actually playred around with
  -  [ ]  1 x IC 74HC595 
  -  [ ]  120 x Resistor 
  -  [ ]  10 x Female-to-male Dupont Wire
-## Elegoo 37-in-1 Sensor Module Kit Inventory
+# Elegoo 37-in-1 Sensor Module Kit 
+* [Elegoo 37-in-1 Sensor Module Kit](https://www.amazon.com/gp/product/B009OVGKTQ/) - **$26.99**
+
+## Inventory
  -  [ ] 1 x Joystick
  -  [ ] 1 x Relay
  -  [ ] 1 x Big sound
