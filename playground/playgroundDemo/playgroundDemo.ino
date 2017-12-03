@@ -5,18 +5,19 @@
 #include <LiquidCrystal.h>
 
 // ========================================
-// WS2812B Multi-Color Strip
+// WS2812B Multi-Color Stripdf
 // ----------------------------------------
 // Wire configuration
 // -[GND] Connects to ground
 // -[DI]  (LED PIN) Add a 220 or 470 Ohm resistor between the Arduino digital output pin and the strip data input pin to reduce noise on that line.
 // -[5V]  Connects to a +5V power supply
 // ========================================
-#define FAST_LED_PIN 2
-#define NUM_LEDS     30
-#define BRIGHTNESS   64
-#define LED_TYPE     WS2812B
-#define COLOR_ORDER  GRB
+#define FAST_LED_PIN   2
+#define FAST_LED_PIN_B 3
+#define NUM_LEDS       150
+#define BRIGHTNESS     64
+#define LED_TYPE       WS2812B
+#define COLOR_ORDER    GRB
 CRGB leds[NUM_LEDS];
 
 #define UPDATES_PER_SECOND 100
@@ -59,25 +60,6 @@ extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 LiquidCrystal lcd(LCD_REGISTER_SELECT, LCD_ENABLING_PIN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 // ========================================
-// Generic Red LED
-// ----------------------------------------
-// Wire configuration
-// [- shorter]  Connects to ground
-// [+ longer]   (R_LED_PIN) Add a 220 Ohm resistor
-// ========================================
-#define R_LED_PIN 3
-
-// ========================================
-// Generic Button
-// ----------------------------------------
-// Wire configuration
-// [Side A]  Connects to ground
-// [Side B]  (BUTTON_PIN) button detection pin
-// ========================================
-#define BUTTON_PIN 13
-
-
-// ========================================
 // Generic RGB LED
 // ----------------------------------------
 // Wire configuration
@@ -96,6 +78,7 @@ void setup()
   
   // Setup WS2812B Strip
   FastLED.addLeds<LED_TYPE, FAST_LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+  FastLED.addLeds<LED_TYPE, FAST_LED_PIN_B, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(  BRIGHTNESS );
   currentPalette = RainbowColors_p;
   currentBlending = LINEARBLEND;
@@ -104,10 +87,6 @@ void setup()
   // Setup LCD Screen
   lcd.begin(LCD_COLUMNS, LCD_ROWS);
 
-  //Setup Button with Red LED
-  pinMode(R_LED_PIN, OUTPUT);
-  pinMode(BUTTON_PIN, INPUT_PULLUP);  
-  
   // Setup RGB LED pins
   pinMode(RGB_LED_PIN_R, OUTPUT);
   pinMode(RGB_LED_PIN_G, OUTPUT);
@@ -131,19 +110,7 @@ void loop()
     FastLED.show();
     FastLED.delay(1000 / UPDATES_PER_SECOND);
 
-    String buttonOutput = "";
-    if (digitalRead(BUTTON_PIN) == LOW)
-    {
-      digitalWrite(R_LED_PIN, LOW);
-      buttonOutput = "Off";
-    }
-    else
-    {
-      digitalWrite(R_LED_PIN, HIGH);
-      buttonOutput = "On";
-    }
-
-    String secondRow = buttonOutput + " " + rgbLedOutput;
+    String secondRow = rgbLedOutput;
     OutputLCD(paletteOutput, secondRow);
 }
 
@@ -215,8 +182,10 @@ String ChangePalettePeriodically()
     if( lastSecond != secondHand) {
         lastSecond = secondHand;
 
+        uint8_t paletteCounts = 2;
+        
         uint8_t i = 0;
-        uint8_t tick = 60 / 19;
+        uint8_t tick = 60 / paletteCounts;
         /*
         if( secondHand == (i += tick))  { currentPalette = RainbowColors_p;         currentBlending = NOBLEND; }      // 01
         if( secondHand == (i += tick))  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }  // 02
@@ -241,6 +210,10 @@ String ChangePalettePeriodically()
         if( secondHand == (i += tick))  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }  // 19
         */
         
+        if( secondHand == (i += tick))  { SetupHolidayPalette();                    currentBlending = LINEARBLEND; }  // 1
+        if( secondHand == (i += tick))  { SetupAstrosPalette();                     currentBlending = LINEARBLEND; }  // 2
+        
+        SetupHolidayPalette();             currentBlending = LINEARBLEND;
         SetupAstrosPalette();             currentBlending = LINEARBLEND;
     }
 
@@ -315,29 +288,49 @@ void SetupPurpleAndGreenPalette()
     CRGB black  = CRGB::Black;
     
     currentPalette = CRGBPalette16(
-                                   green,  green,  black,  black,
-                                   purple, purple, black,  black,
-                                   green,  green,  black,  black,
-                                   purple, purple, black,  black );
+      green,  green,  black, black,
+      purple, purple, black, black,
+      green,  green,  black, black,
+      purple, purple, black, black
+    );
 }
 
-// This function sets up a palette of purple and green stripes.
-void SetupAstrosPalette()
+void SetupHolidayPalette()
 {
-    CRGB red  = CHSV( HUE_RED, 255, 255);
-    CRGB orange = CHSV( HUE_ORANGE, 255, 255);
-    CRGB yellow = CHSV( HUE_YELLOW, 255, 255);
-    CRGB green  = CHSV( HUE_GREEN, 255, 255);
-    CRGB blue  = CHSV( HUE_BLUE, 255, 255);
-    CRGB purple  = CHSV( HUE_PURPLE, 255, 255);
+    CRGB redd = CHSV( HUE_RED, 255, 255);
+    CRGB orng = CHSV( HUE_ORANGE, 255, 255);
+    CRGB yllw = CHSV( HUE_YELLOW, 255, 255);
+    CRGB gren = CHSV( HUE_GREEN, 255, 255);
+    CRGB blue = CHSV( HUE_BLUE, 255, 255);
+    CRGB prpl  = CHSV( HUE_PURPLE, 255, 255);
     
-    CRGB black  = CRGB::Black;
+    CRGB blck  = CRGB::Black;
     
     currentPalette = CRGBPalette16(
-                                   red,  orange,  red,  orange,
-                                   red,  yellow,  red,  yellow,
-                                   orange,  yellow,  orange,  yellow,
-                                   red,  orange,  red,  green );
+      redd, orng, redd, orng,
+      redd, yllw, redd, yllw,
+      orng, yllw, orng, yllw,
+      redd, orng, redd, gren
+    );
+}
+
+void SetupAstrosPalette()
+{
+    CRGB redd = CHSV( HUE_RED, 255, 255);
+    CRGB orng = CHSV( HUE_ORANGE, 255, 255);
+    CRGB yllw = CHSV( HUE_YELLOW, 255, 255);
+    CRGB gren = CHSV( HUE_GREEN, 255, 255);
+    CRGB blue = CHSV( HUE_BLUE, 255, 255);
+    CRGB prpl  = CHSV( HUE_PURPLE, 255, 255);
+    
+    CRGB blck  = CRGB::Black;
+    
+    currentPalette = CRGBPalette16(
+      orng, orng, orng, blue,
+      orng, orng, orng, blue,
+      orng, orng, orng, blue,
+      orng, orng, orng, blue
+    );
 }
 
 // This example shows how to set up a static color palette
