@@ -13,6 +13,13 @@ CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
 int           currentPalettePointer = 0;
 
+String PALETTE_GLOW      = "Glow";
+String PALETTE_CANDYCANE = "Candy Cane";
+String PALETTE_COLORFUL  = "Colorful";
+String PALETTE_HOLIDAY   = "Holiday";
+String PALETTE_CHASE     = "Chase";
+String PALETTE_SPARKLES  = "Sparkles";
+
 // ========================================================================================================================
 // INITIALIZE HARDWARE
 // ========================================================================================================================
@@ -125,25 +132,51 @@ void FillLEDsFromPaletteColors( uint8_t colorIndex)
 // ------------------------------------------------------------------------------------------------------------------------
 String PalettePicker()
 {
-  uint8_t paletteArrayLength = 5;
+  uint8_t paletteArrayLength = 6;
   
-  uint8_t seconds = ((millis() / 1000)/( 1)) % 60;
-  uint8_t minutes = ((millis() / 1000)/(60)) % 60;
-  uint8_t pointer = minutes % paletteArrayLength;
+  uint8_t totalSeconds = millis() / 1000;
+  uint8_t seconds = totalSeconds % 60;
+  
+  uint8_t totalMinutes = ( totalSeconds / 60 ) % 60;
+  uint8_t minutes = totalMinutes % 60;
+  
+  //uint8_t pointer = minutes % paletteArrayLength;
+  uint8_t pointer = seconds % ( paletteArrayLength);
   
   String paletteName = "";
-  
-  //if( pointer == 0)  { SetupSparkles();        currentBlending = LINEARBLEND; paletteName = "Sparkles"; }
-  
+
   uint8_t i = 0;
-  if( pointer == i++) { currentBlending = LINEARBLEND; SetupGlowPalette();      paletteName = "Glow"; }
-  if( pointer == i++) { currentBlending = NOBLEND;     SetupCandyCanePalette(); paletteName = "Candy Cane"; }
-  if( pointer == i++) { currentBlending = NOBLEND;     SetupColorfulPalette();  paletteName = "Colorful"; }
-  if( pointer == i++) { currentBlending = LINEARBLEND; SetupHolidayPalette();   paletteName = "Holiday"; }
-  if( pointer == i++) { currentBlending = LINEARBLEND; SetupChasePalette();     paletteName = "Chase"; }
-  if( pointer == i++) { currentBlending = LINEARBLEND; SetupSparklesPalette();  paletteName = "Chase"; }
+  if( pointer == i++) { currentBlending = LINEARBLEND; paletteName = GetPalette(PALETTE_GLOW); }
+  if( pointer == i++) { currentBlending = NOBLEND;     paletteName = GetPalette(PALETTE_CANDYCANE); }
+  if( pointer == i++) { currentBlending = NOBLEND;     paletteName = GetPalette(PALETTE_COLORFUL); }
+  if( pointer == i++) { currentBlending = LINEARBLEND; paletteName = GetPalette(PALETTE_SPARKLES); }
+  if( pointer == i++) { currentBlending = LINEARBLEND; paletteName = GetPalette(PALETTE_HOLIDAY); }
+  if( pointer == i++) { currentBlending = LINEARBLEND; paletteName = GetPalette(PALETTE_CHASE); }
+
+  String displayMinutes = "";
+  if(minutes < 10)
+  {
+    displayMinutes = "0" + String(minutes);
+  }
+  else
+  {
+    displayMinutes = String(minutes);
+  }
   
-  return "" + String(seconds) + ":" + String(pointer) + ":" + paletteName;
+  String displaySeconds = "";
+  if(seconds < 10)
+  {
+    displaySeconds = "0" + String(seconds);
+  }
+  else
+  {
+    displaySeconds = String(seconds);
+  }
+
+  String displayTime = displayMinutes + ":" + displaySeconds;
+  String displayPalette = String(pointer + 1) + "-" + paletteName;
+  
+  return displayTime + " " + displayPalette;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -163,6 +196,47 @@ void OutputLCD(String firstRow, String secondRow)
 // ========================================================================================================================
 // PALETTE FUNCTIONS
 // ========================================================================================================================
+
+// ------------------------------------------------------------------------------------------------------------------------
+// GetPalette
+// ------------------------------------------------------------------------------------------------------------------------
+String GetPalette(String paletteName)
+{
+  if( paletteName == PALETTE_HOLIDAY)
+  {  
+    SetupHolidayPalette();
+    return paletteName;
+  }
+  else if( paletteName == PALETTE_SPARKLES)
+  {
+    SetupSparklesPalette();
+    return paletteName;
+  }
+  else if( paletteName == PALETTE_CHASE)
+  {
+    SetupChasePalette();
+    return paletteName;
+  }
+  else if( paletteName == PALETTE_COLORFUL)
+  {
+    SetupColorfulPalette();
+    return paletteName;
+  }
+  else if( paletteName == PALETTE_CANDYCANE)
+  {
+    SetupCandyCanePalette();
+    return paletteName;
+  }
+  else if( paletteName == PALETTE_GLOW)
+  {
+    SetupGlowPalette();
+    return paletteName;
+  }
+  else
+  {
+    return "UNKNOWN";
+  }
+}
 
 // ------------------------------------------------------------------------------------------------------------------------
 // SetupHolidayPalette
@@ -283,4 +357,4 @@ void SetupGlowPalette()
   );
 }
 
-EOL
+//EOL
