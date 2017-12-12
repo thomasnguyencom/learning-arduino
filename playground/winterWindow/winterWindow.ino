@@ -9,8 +9,9 @@
 // GLOBAL
 // ========================================================================================================================
 // Global variables
-CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
+CRGBPalette16 currentPalette;
+String        currentPaletteName;
 int           currentPalettePointer = 0;
 
 String PALETTE_GLOW      = "Glow";
@@ -134,25 +135,34 @@ String PalettePicker()
 {
   uint8_t paletteArrayLength = 6;
   
-  uint8_t totalSeconds = millis() / 1000;
-  uint8_t seconds = totalSeconds % 60;
+  unsigned long totalSeconds = millis() / 1000;
+  unsigned long seconds = totalSeconds % 60;
   
-  uint8_t totalMinutes = ( totalSeconds / 60 ) % 60;
-  uint8_t minutes = totalMinutes % 60;
+  unsigned long totalMinutes = ( totalSeconds / 60 );
+  unsigned long minutes = totalMinutes % 60;
   
-  //uint8_t pointer = minutes % paletteArrayLength;
-  uint8_t pointer = seconds % ( paletteArrayLength);
+  unsigned long totalHours = ( totalMinutes / 60 );
   
-  String paletteName = "";
+  unsigned long pointer = ( totalMinutes / 15 ) % ( paletteArrayLength);
+  
+  unsigned long i = 0;
+  if( pointer == i++) { currentBlending = NOBLEND;     GetPalette(PALETTE_CANDYCANE); }
+  if( pointer == i++) { currentBlending = NOBLEND;     GetPalette(PALETTE_GLOW); }
+  if( pointer == i++) { currentBlending = NOBLEND;     GetPalette(PALETTE_COLORFUL); }
+  if( pointer == i++) { currentBlending = LINEARBLEND; GetPalette(PALETTE_SPARKLES); }
+  if( pointer == i++) { currentBlending = NOBLEND;     GetPalette(PALETTE_HOLIDAY); }
+  if( pointer == i++) { currentBlending = LINEARBLEND; GetPalette(PALETTE_CHASE); }
 
-  uint8_t i = 0;
-  if( pointer == i++) { currentBlending = LINEARBLEND; paletteName = GetPalette(PALETTE_GLOW); }
-  if( pointer == i++) { currentBlending = NOBLEND;     paletteName = GetPalette(PALETTE_CANDYCANE); }
-  if( pointer == i++) { currentBlending = NOBLEND;     paletteName = GetPalette(PALETTE_COLORFUL); }
-  if( pointer == i++) { currentBlending = LINEARBLEND; paletteName = GetPalette(PALETTE_SPARKLES); }
-  if( pointer == i++) { currentBlending = LINEARBLEND; paletteName = GetPalette(PALETTE_HOLIDAY); }
-  if( pointer == i++) { currentBlending = LINEARBLEND; paletteName = GetPalette(PALETTE_CHASE); }
-
+  String displayHours = "";
+  if(totalHours < 10)
+  {
+    displayHours = "0" + String(totalHours);
+  }
+  else
+  {
+    displayHours = String(totalHours);
+  }
+  
   String displayMinutes = "";
   if(minutes < 10)
   {
@@ -173,8 +183,8 @@ String PalettePicker()
     displaySeconds = String(seconds);
   }
 
-  String displayTime = displayMinutes + ":" + displaySeconds;
-  String displayPalette = String(pointer + 1) + "-" + paletteName;
+  String displayTime = displayHours + ":" + displayMinutes + ":" + displaySeconds;
+  String displayPalette = String(pointer + 1) + "-" + currentPaletteName;
   
   return displayTime + " " + displayPalette;
 }
@@ -200,22 +210,19 @@ void OutputLCD(String firstRow, String secondRow)
 // ------------------------------------------------------------------------------------------------------------------------
 // GetPalette
 // ------------------------------------------------------------------------------------------------------------------------
-String GetPalette(String paletteName)
+void GetPalette(String paletteName)
 {
   if( paletteName == PALETTE_HOLIDAY)
   {  
     SetupHolidayPalette();
-    return paletteName;
   }
   else if( paletteName == PALETTE_SPARKLES)
   {
     SetupSparklesPalette();
-    return paletteName;
   }
   else if( paletteName == PALETTE_CHASE)
   {
     SetupChasePalette();
-    return paletteName;
   }
   else if( paletteName == PALETTE_COLORFUL)
   {
@@ -225,17 +232,17 @@ String GetPalette(String paletteName)
   else if( paletteName == PALETTE_CANDYCANE)
   {
     SetupCandyCanePalette();
-    return paletteName;
   }
   else if( paletteName == PALETTE_GLOW)
   {
     SetupGlowPalette();
-    return paletteName;
   }
   else
   {
-    return "UNKNOWN";
+    paletteName = "UNKNOWN";
   }
+
+  currentPaletteName = paletteName;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
