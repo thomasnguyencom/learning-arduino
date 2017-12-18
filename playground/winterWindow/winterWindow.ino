@@ -3,6 +3,7 @@
 // http://fastled.io/
 // ------------------------------------------------------------------------------------------------------------------------
 #include <FastLED.h>
+#include <LiquidCrystal.h>
 
 // ========================================================================================================================
 // GLOBAL
@@ -15,7 +16,7 @@ int           currentPalettePointer = 0;
 
 String PALETTE_GLOW      = "Glow";
 String PALETTE_CANDYCANE = "Candy Cane";
-String PALETTE_COLORFUL  = "Colorful";
+String PALETTE_COLORFUL  = "Colorful";  
 String PALETTE_HOLIDAY   = "Holiday";
 String PALETTE_CHASE     = "Chase";
 String PALETTE_SPARKLES  = "Sparkles";
@@ -25,7 +26,7 @@ String PALETTE_SPARKLES  = "Sparkles";
 // ========================================================================================================================
 
 // ------------------------------------------------------------------------------------------------------------------------
-// INIT : WS2811
+// INIT : WS2812B Multi-Color Strip
 // ------------------------------------------------------------------------------------------------------------------------
 // Wire configuration
 // -[GND] Connects to ground
@@ -37,11 +38,41 @@ String PALETTE_SPARKLES  = "Sparkles";
 #define NUM_LEDS           150
 CRGB leds[NUM_LEDS];
 #define BRIGHTNESS         64
-#define LED_TYPE           WS2811
+#define LED_TYPE           WS2812B
 #define COLOR_ORDER        GRB
 
 // Pin assignments
 #define FAST_LED_PIN        2
+
+// ------------------------------------------------------------------------------------------------------------------------
+// INIT : LCD1602 LCD Screen
+// ------------------------------------------------------------------------------------------------------------------------
+// -[VSS]   Connects to ground                 Powers the LCDs
+// -[VDD]   Connects to a +5V power supply     Powers the LCDs
+// -[VO]    Connects to a (10k) Potentiometer  Adjusts the contrast of LCD1602
+// -[RS]    (see below)                        (LCD_REGISTER_SELECT) A register select pin that controls where in the LCD’s
+//                                             memory you are writing data to. You can select either the data register,
+//                                             which holds what goes on the screen, or an instruction register, which is 
+//                                             where the LCD’s controller looks for instructions on what to do next.
+// -[R/W]   Connects to ground                 A Read/Write pin that selects reading mode or writing mode
+// -[E]     (see below)                        (LCD_ENABLING_PIN) An enabling pin that, when supplied with low-level energy,
+//                                             causes the LDC module to execute relevant instructions.
+// -[D0-D7] (see below)                        Pins that read and write data
+// -[A]     Connects to a +5V power supply     Powers the LCD backlight
+// -[K]     Connects to ground                 Powers the LCD backlight
+// ------------------------------------------------------------------------------------------------------------------------
+#define LCD_COLUMNS         16
+#define LCD_ROWS            2
+
+// Pin assignments
+#define LCD_REGISTER_SELECT 7
+#define LCD_ENABLING_PIN    8
+#define LCD_D4              9
+#define LCD_D5              10
+#define LCD_D6              11
+#define LCD_D7              12
+
+LiquidCrystal lcd(LCD_REGISTER_SELECT, LCD_ENABLING_PIN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 // ========================================================================================================================
 // MAIN
@@ -57,6 +88,9 @@ void setup()
   // Setup WS2812B Strip
   FastLED.addLeds<LED_TYPE, FAST_LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(  BRIGHTNESS );
+  
+  // Setup LCD Screen
+  lcd.begin(LCD_COLUMNS, LCD_ROWS);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -72,7 +106,10 @@ void loop()
   
   FastLED.show();
   FastLED.delay(1000 / UPDATES_PER_SECOND);
-  }
+  
+  String secondRow = "TEST";
+  OutputLCD(paletteOutput, secondRow);
+}
 
 // ========================================================================================================================
 // FUNCTIONS
@@ -150,6 +187,20 @@ String PalettePicker()
   String displayPalette = String(pointer + 1) + "-" + currentPaletteName;
   
   return displayTime + " " + displayPalette;
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// OutputLCD
+// ------------------------------------------------------------------------------------------------------------------------
+void OutputLCD(String firstRow, String secondRow)
+{
+  lcd.clear();
+  
+  lcd.setCursor(0, 0);  
+  lcd.print(firstRow);
+  
+  lcd.setCursor(0, 1);  
+  lcd.print(secondRow);
 }
 
 // ========================================================================================================================
