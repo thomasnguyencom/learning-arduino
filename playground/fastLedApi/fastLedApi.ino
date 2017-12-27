@@ -62,6 +62,8 @@ void loop()
 
   while(true) {
     fill_solid_examples(1);
+    
+    fill_solid_examples(2);
   }
 }
 
@@ -86,9 +88,13 @@ void fill_solid_examples(uint8_t option)
       fill_solid_reset();
       break;
     case 1:
-      PRINT_BR_1(optionPrefix + "RGB");
+      PRINT_BR_1(optionPrefix + "RGB - red, green, blue");
       fill_solid_rgb(stepper, delay_ms);
       break;
+    /*case 2:
+      PRINT_BR_1(optionPrefix + "HSV - hue, saturation, value (brightness)");
+      fill_solid_hsv(stepper, delay_ms);
+      break;*/
     
     default: 
       break;
@@ -97,7 +103,7 @@ void fill_solid_examples(uint8_t option)
 
 void fill_solid_reset()
 {
-  fill_solid_easy(0, 0, 0, 0, "Reset");
+  fill_solid_rgb_details(0, 0, 0, 0, "Reset");
 }
 
 void fill_solid_rgb(uint8_t stepper, uint8_t delay_ms)
@@ -112,22 +118,17 @@ void fill_solid_rgb(uint8_t stepper, uint8_t delay_ms)
    * uint16_t is 0-65,535
    */
   
-  r =   0; g =   0; b =   0; for(r =   0; r < 255; r+=stepper) { fill_solid_easy(delay_ms, r, g, b, "[black  ] [red    ] "); }
-  r = 255; g =   0; b =   0; for(g =   0; g < 255; g+=stepper) { fill_solid_easy(delay_ms, r, g, b, "[red    ] [yellow ] "); }
-  r = 255; g = 255; b =   0; for(r = 255; r >=  0; r-=stepper) { fill_solid_easy(delay_ms, r, g, b, "[yellow ] [green  ] "); }
-  r =   0; g = 255; b =   0; for(b =   0; b < 255; b+=stepper) { fill_solid_easy(delay_ms, r, g, b, "[green  ] [cyan   ] "); }
-  r =   0; g = 255; b = 255; for(g = 255; g >=  0; g-=stepper) { fill_solid_easy(delay_ms, r, g, b, "[cyan   ] [blue   ] "); }
-  r =   0; g =   0; b = 255; for(r =   0; r < 255; r+=stepper) { fill_solid_easy(delay_ms, r, g, b, "[blue   ] [magenta] "); }
-  r = 255; g =   0; b = 255; for(g =   0; g < 255; g+=stepper) { fill_solid_easy(delay_ms, r, g, b, "[magenta] [white  ] "); }
-  x = 255;                   for(x = 255; x >=  0; x-=stepper) { fill_solid_easy(delay_ms, x, x, x, "[white  ] [black  ] "); }
+  r =   0; g =   0; b =   0; for(r =   0; r < 255; r+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "[black  ] [red    ] "); }
+  r = 255; g =   0; b =   0; for(g =   0; g < 255; g+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "[red    ] [yellow ] "); }
+  r = 255; g = 255; b =   0; for(r = 255; r >=  0; r-=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "[yellow ] [green  ] "); }
+  r =   0; g = 255; b =   0; for(b =   0; b < 255; b+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "[green  ] [cyan   ] "); }
+  r =   0; g = 255; b = 255; for(g = 255; g >=  0; g-=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "[cyan   ] [blue   ] "); }
+  r =   0; g =   0; b = 255; for(r =   0; r < 255; r+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "[blue   ] [magenta] "); }
+  r = 255; g =   0; b = 255; for(g =   0; g < 255; g+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "[magenta] [white  ] "); }
+  x = 255;                   for(x = 255; x >=  0; x-=stepper) { fill_solid_rgb_details(delay_ms, x, x, x, "[white  ] [black  ] "); }
 }
 
-void fill_solid_easy(uint8_t d, uint8_t r, uint8_t g, uint8_t b)
-{
-  fill_solid_easy(r, g, b, "");
-}
-
-void fill_solid_easy(uint8_t delay_ms, uint8_t r, uint8_t g, uint8_t b, String prefix)
+void fill_solid_rgb_details(uint8_t delay_ms, uint8_t r, uint8_t g, uint8_t b, String prefix)
 {  
   String rgb = prefix + String(r) + "." + String(g) + "." + String(b);
   Serial.println(rgb);
