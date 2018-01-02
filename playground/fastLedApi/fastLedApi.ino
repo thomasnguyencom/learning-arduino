@@ -3,14 +3,11 @@
 // http://fastled.io/
 // ------------------------------------------------------------------------------------------------------------------------
 #include <FastLED.h>
-#include <LiquidCrystal.h>
 
 // ========================================================================================================================
 // GLOBAL
 // ========================================================================================================================
 // Global variables
-String LINEBREAK_1 = "=============================================================================";
-String LINEBREAK_2 = "-----------------------------------------------------------------------------";
 
 // ========================================================================================================================
 // INITIALIZE HARDWARE
@@ -58,12 +55,13 @@ void setup()
 // ------------------------------------------------------------------------------------------------------------------------
 void loop()
 {
-
-  fill_solid_examples(0);
-  fill_solid_examples(2);
+  fill_examples(0); //FILL_RESET
   
-  //fill_solid_examples(0);
-  //fill_solid_examples(1);
+  fill_examples(1); // FILL_SOLID_RGB
+  fill_examples(2); // FILL_SOLID_HSV
+
+  fill_examples(3); // FILL_RAINBOW_RGB
+  fill_examples(4); // FILL_RAINBOW_HSV
 }
 
 // ========================================================================================================================
@@ -71,9 +69,9 @@ void loop()
 // ========================================================================================================================
 
 // ------------------------------------------------------------------------------------------------------------------------
-// fill_solid (struct CRGB *leds, int numToFill, const struct CRGB &color)
+// fill_solid, fill_rainbow, fill_gradient
 // ------------------------------------------------------------------------------------------------------------------------
-void fill_solid_examples(uint8_t option)
+void fill_examples(uint8_t option)
 {
   uint8_t stepper = 16;
   uint8_t delay_ms = 10;
@@ -82,20 +80,26 @@ void fill_solid_examples(uint8_t option)
 
   switch(option)
   {
-    case 0:
-      PRINT_BR_1(optionPrefix + "RGB Reset");
+    case 0: //FILL_RESET:
+      PRINT_BR_1(optionPrefix + "Solid RGB Reset");
       fill_solid_rgb_reset();
       break;
-    case 1:
-      PRINT_BR_1(optionPrefix + "RGB - red, green, blue");
+    case 1: //FILL_SOLID_RGB:
+      PRINT_BR_1(optionPrefix + "Solid RGB - red, green, blue");
       fill_solid_rgb(stepper, delay_ms);
       break;
-    case 2:
-      PRINT_BR_1(optionPrefix + "HSV - hue, saturation, value (brightness)");
+    case 2: //FILL_SOLID_HSV:
+      PRINT_BR_1(optionPrefix + "Solid HSV - hue, saturation, value (brightness)");
       fill_solid_hsv(stepper, delay_ms);
       break;
-    
+    case 3: //FILL_RAINBOW_RGB:
+      PRINT_BR_1(optionPrefix + "Rainbow RGB");
+      break;
+    case 4: //FILL_RAINBOW_HSV:
+      PRINT_BR_1(optionPrefix + "Rainbow HSV - hue, saturation, value (brightness)");
+      break;
     default: 
+      PRINT_BR_1(optionPrefix + "Unknown - " + option);
       break;
   }
 }
@@ -206,16 +210,26 @@ void fill_solid_hsv_details(uint8_t delay_ms, uint8_t r, uint8_t g, uint8_t b, S
 // ------------------------------------------------------------------------------------------------------------------------
 void PRINT_BR_1(String message)
 {
-  Serial.println(LINEBREAK_1);
+  Serial.println(BR_1());
   Serial.println(message);
-  Serial.println(LINEBREAK_1);
+  Serial.println(BR_1());
 }
 
 void PRINT_BR_2(String message)
 {
-  Serial.println(LINEBREAK_2);
+  Serial.println(BR_2());
   Serial.println(message);
-  Serial.println(LINEBREAK_2);
+  Serial.println(BR_2());
+}
+
+String BR_1()
+{
+  return "=============================================================================";
+}
+
+String BR_2()
+{
+  return "-----------------------------------------------------------------------------";
 }
       
 //EOL
