@@ -22,8 +22,10 @@
 //        reduce noise on that line.
 // -[5V]  Connects to a +5V power supply
 // ------------------------------------------------------------------------------------------------------------------------
-#define NUM_LEDS           150 / 10 // my mini strips
+//#define NUM_LEDS           150 / (10) // whole strip
+#define NUM_LEDS           15 * 2 // my mini strips
 CRGB _leds[NUM_LEDS];
+//CRGB _leds[NUM_LEDS];
 #define BRIGHTNESS         64
 #define LED_TYPE           WS2812B
 #define COLOR_ORDER        GRB
@@ -57,8 +59,8 @@ void loop()
 {
   fill_examples(0); //FILL_RESET
   
-  fill_examples(1); // FILL_SOLID_RGB
-  fill_examples(2); // FILL_SOLID_HSV
+  //fill_examples(1); // FILL_SOLID_RGB
+  //fill_examples(2); // FILL_SOLID_HSV
 
   fill_examples(3); // FILL_RAINBOW_RGB
   fill_examples(4); // FILL_RAINBOW_HSV
@@ -94,9 +96,11 @@ void fill_examples(uint8_t option)
       break;
     case 3: //FILL_RAINBOW_RGB:
       printHeader(1, optionPrefix + "Rainbow RGB");
+      fill_rainbow_rgb(stepper, delay_ms);
       break;
     case 4: //FILL_RAINBOW_HSV:
       printHeader(1, optionPrefix + "Rainbow HSV - hue, saturation, value (brightness)");
+      fill_rainbow_hsv(stepper, delay_ms);
       break;
     default: 
       printHeader(1, optionPrefix + "Unknown - " + option);
@@ -199,6 +203,32 @@ void fill_solid_hsv_details(uint8_t delay_ms, uint8_t r, uint8_t g, uint8_t b, S
   
   FastLED.show();
   FastLED.delay(delay_ms);
+}
+
+// ************
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fill_rainbow_rgb(uint8_t stepper, uint8_t delay_ms)
+// ------------------------------------------------------------------------------------------------------------------------
+void fill_rainbow_rgb(uint8_t stepper, uint8_t delay_ms)
+{
+  uint8_t deltahue = 8;
+  fill_rainbow(_leds, NUM_LEDS, 0, deltahue);
+  
+  FastLED.show();
+  FastLED.delay(2000);
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fill_rainbow_hsv(uint8_t stepper, uint8_t delay_ms)
+// ------------------------------------------------------------------------------------------------------------------------
+void fill_rainbow_hsv(uint8_t stepper, uint8_t delay_ms)
+{
+  uint8_t deltahue = 16;
+  fill_rainbow(_leds, NUM_LEDS, 0, deltahue);
+  
+  FastLED.show();
+  FastLED.delay(2000);
 }
 
 // ========================================================================================================================
