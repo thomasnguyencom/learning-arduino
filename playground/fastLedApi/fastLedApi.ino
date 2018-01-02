@@ -23,7 +23,7 @@
 // -[5V]  Connects to a +5V power supply
 // ------------------------------------------------------------------------------------------------------------------------
 //#define NUM_LEDS           150 / (10) // whole strip
-#define NUM_LEDS           15 * 2 // my mini strips
+#define NUM_LEDS           30 // my mini strips (15 each)
 CRGB _leds[NUM_LEDS];
 //CRGB _leds[NUM_LEDS];
 #define BRIGHTNESS         64
@@ -57,13 +57,20 @@ void setup()
 // ------------------------------------------------------------------------------------------------------------------------
 void loop()
 {
+  printHeader(1, "Starting loop");
+  
   fill_examples(0); //FILL_RESET
   
   //fill_examples(1); // FILL_SOLID_RGB
   //fill_examples(2); // FILL_SOLID_HSV
 
-  fill_examples(3); // FILL_RAINBOW_RGB
-  fill_examples(4); // FILL_RAINBOW_HSV
+  //fill_examples(3); // FILL_RAINBOW_RGB
+  //fill_examples(4); // FILL_RAINBOW_HSV
+  
+  //fill_examples(5); // FILL_GRADIENT_RGB
+  fill_examples(6); // FILL_GRADIENT_HSV
+  
+  printHeader(99, "Loop ended");
 }
 
 // ========================================================================================================================
@@ -78,42 +85,50 @@ void fill_examples(uint8_t option)
   uint8_t stepper = 16;
   uint8_t delay_ms = 10;
   
-  String optionPrefix = "Starting fill_solid - ";
+  String optionPrefix = "";
 
   switch(option)
   {
     case 0: //FILL_RESET:
-      printHeader(1, optionPrefix + "Solid RGB Reset");
-      fill_solid_rgb_reset();
+      //printHeader(2, optionPrefix + "Fill Solid RGB Reset");
+      fill_solid_rgb_reset(delay_ms);
       break;
     case 1: //FILL_SOLID_RGB:
-      printHeader(1, optionPrefix + "Solid RGB - red, green, blue");
+      printHeader(2, optionPrefix + "Fill Solid RGB - red, green, blue");
       fill_solid_rgb(stepper, delay_ms);
       break;
     case 2: //FILL_SOLID_HSV:
-      printHeader(1, optionPrefix + "Solid HSV - hue, saturation, value (brightness)");
+      printHeader(2, optionPrefix + "Fill Solid HSV - hue, saturation, value (brightness)");
       fill_solid_hsv(stepper, delay_ms);
       break;
     case 3: //FILL_RAINBOW_RGB:
-      printHeader(1, optionPrefix + "Rainbow RGB");
+      printHeader(2, optionPrefix + "Fill Rainbow RGB");
       fill_rainbow_rgb(stepper, delay_ms);
       break;
     case 4: //FILL_RAINBOW_HSV:
-      printHeader(1, optionPrefix + "Rainbow HSV - hue, saturation, value (brightness)");
+      printHeader(2, optionPrefix + "Fill Rainbow HSV - hue, saturation, value (brightness)");
       fill_rainbow_hsv(stepper, delay_ms);
       break;
+    case 5: //FILL_GRADIENT_RGB:
+      printHeader(2, optionPrefix + "Fill Gradient RGB");
+      //fill_gradient_rgb(stepper, delay_ms);
+      break;
+    case 6: //FILL_GRADIENT_HSV:
+      printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
+      fill_gradient_hsv(stepper, delay_ms);
+      break;
     default: 
-      printHeader(1, optionPrefix + "Unknown - " + option);
+      printHeader(2, optionPrefix + "Unknown - " + option);
       break;
   }
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
-// fill_solid_rgb_reset()
+// fill_solid_rgb_reset(uint8_t delay_ms)
 // ------------------------------------------------------------------------------------------------------------------------
-void fill_solid_rgb_reset()
+void fill_solid_rgb_reset(uint8_t delay_ms)
 {
-  fill_solid_rgb_details(0, 0, 0, 0, "Reset");
+  fill_solid_rgb_details(delay_ms, 0, 0, 0, "Reset");
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -146,7 +161,7 @@ void fill_solid_rgb(uint8_t stepper, uint8_t delay_ms)
 // ------------------------------------------------------------------------------------------------------------------------
 void fill_solid_rgb_details(uint8_t delay_ms, uint8_t r, uint8_t g, uint8_t b, String prefix)
 {  
-  String rgb = prefix + String(r) + "." + String(g) + "." + String(b);
+  String rgb = prefix + " " + String(r) + "." + String(g) + "." + String(b);
   Serial.println(rgb);
   
   fill_solid(_leds, NUM_LEDS, CRGB(r, g, b));
@@ -187,8 +202,8 @@ void fill_solid_hsv(uint8_t stepper, uint8_t delay_ms)
   h =   0; s = 255; v = 250; for(h = 171; h < 255; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue) [blue   ] [red    ] "); } FastLED.delay(1000);
 
   //hsv fade out
-  h =   0; s = 255; v = 255; for(s = 255; s >=   0; s-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (saturation) [red    ] [white  ] "); }
-  h =   0; s =   0; v = 255; for(v =   v; v >=   0; v-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (brightness) [white  ] [black  ] "); }
+  h =   0; s = 255; v = 255; for(s = 255; s >=   0; s-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (saturation) [red    ] [white  ] "); } FastLED.delay(1000);
+  h =   0; s =   0; v = 255; for(v =   v; v >=   0; v-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (brightness) [white  ] [black  ] "); } FastLED.delay(1000);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -204,8 +219,6 @@ void fill_solid_hsv_details(uint8_t delay_ms, uint8_t r, uint8_t g, uint8_t b, S
   FastLED.show();
   FastLED.delay(delay_ms);
 }
-
-// ************
 
 // ------------------------------------------------------------------------------------------------------------------------
 // void fill_rainbow_rgb(uint8_t stepper, uint8_t delay_ms)
@@ -231,6 +244,53 @@ void fill_rainbow_hsv(uint8_t stepper, uint8_t delay_ms)
   FastLED.delay(2000);
 }
 
+// ************
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms)
+// ------------------------------------------------------------------------------------------------------------------------
+void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms)
+{
+  uint8_t deltahue = 8;
+  /* fill_gradient (
+        T *targetArray, 
+        uint16_t startpos, 
+        CHSV startcolor, 
+        uint16_t endpos, 
+        CHSV endcolor, 
+        TGradientDirectionCode directionCode=SHORTEST_HUES) FORWARD_HUES, BACKWARD_HUES, SHORTEST_HUES, LONGEST_HUES */
+
+  uint8_t startPosition = 0;
+  uint8_t endPosition = 0;
+
+  //startPosition = 0;               endPosition = startPosition + 3; fill_gradient_hsv(stepper, delay_ms, startPosition,   0, endPosition,  85, "Rainbow 1/3 - ");
+  //startPosition = endPosition + 2; endPosition = startPosition + 3; fill_gradient_hsv(stepper, delay_ms, startPosition,  86, endPosition, 170, "Rainbow 2/3 - ");
+  //startPosition = endPosition + 2; endPosition = startPosition + 3; fill_gradient_hsv(stepper, delay_ms, startPosition, 171, endPosition, 255, "Rainbow 3/3 - ");
+
+  fill_examples(0); //FILL_RESET
+  for(uint8_t pos =              0; pos < NUM_LEDS; pos += 1) { fill_gradient_hsv(stepper, delay_ms,               0, CHSV(  0, 255, 255), pos, CHSV( 85, 255, 255), "Expand - (red - green)"); }
+  for( int8_t pos = (NUM_LEDS - 1); pos >= 0      ; pos -= 1) { fill_gradient_hsv(stepper, delay_ms,  (NUM_LEDS - 1), CHSV( 86, 255, 255), pos, CHSV(170, 255, 255), "Expand - (green - blue)"); }
+  for(uint8_t pos =              0; pos < NUM_LEDS; pos += 1) { fill_gradient_hsv(stepper, delay_ms,               0, CHSV(171, 255, 255), pos, CHSV(255, 255, 255), "Expand - (blue - red)"); }
+  for( int8_t pos = (NUM_LEDS - 1); pos >= 0      ; pos -= 1) { fill_gradient_hsv(stepper, delay_ms,  (NUM_LEDS - 1), CHSV(  0,   0,   0), pos, CHSV(  0,   0,   0), "Expand - (red - black)"); }
+  
+
+  fill_examples(0); //FILL_RESET
+}
+
+void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms, uint16_t startPosition, CHSV startHue, uint16_t endPosition, CHSV endHue, String prefix)
+{
+  //String hues = "Hues (" + String(startHue) + ", " + String(endHue) + ")";
+  String range = "Range (" + String(startPosition) + ", " + String(endPosition) + ")";
+  String output = prefix + " " + range; // + "  " + hues;
+  
+  Serial.println(output);
+  
+  fill_gradient(_leds, startPosition, startHue, endPosition, endHue, SHORTEST_HUES); 
+  
+  FastLED.show(); 
+  FastLED.delay(delay_ms);
+}
+
 // ========================================================================================================================
 // MISC
 // ========================================================================================================================
@@ -244,16 +304,21 @@ void printHeader(int borderType, String message)
   switch(borderType)
   {
     case 1:
-      border = "=============================================================================";
+      border = "=====-=====-=====-=====-=====-=====-=====";
       break;
     case 2:
-      border = "-----------------------------------------------------------------------------";
+      border = "-----.-----.-----.-----.-----.-----.-----";
+      break;
+    case 99:
+      border = ".....-.....-.....-.....-.....-.....-.....";
       break;
     default:
       border = "";
       break;
     
   }
+  
+  Serial.println("");
   
   if(border == "")
   {
@@ -263,7 +328,7 @@ void printHeader(int borderType, String message)
   {
     Serial.println(border);
     Serial.println(message);
-    Serial.println(border);
+    Serial.println("-----------------------------------------");
   }
 }
       
