@@ -22,7 +22,7 @@
 //        reduce noise on that line.
 // -[5V]  Connects to a +5V power supply
 // ------------------------------------------------------------------------------------------------------------------------
-#define NUM_LEDS           150
+#define NUM_LEDS           150 / 10 // my mini strips
 CRGB _leds[NUM_LEDS];
 #define BRIGHTNESS         64
 #define LED_TYPE           WS2812B
@@ -81,25 +81,25 @@ void fill_examples(uint8_t option)
   switch(option)
   {
     case 0: //FILL_RESET:
-      PRINT_BR_1(optionPrefix + "Solid RGB Reset");
+      printHeader(1, optionPrefix + "Solid RGB Reset");
       fill_solid_rgb_reset();
       break;
     case 1: //FILL_SOLID_RGB:
-      PRINT_BR_1(optionPrefix + "Solid RGB - red, green, blue");
+      printHeader(1, optionPrefix + "Solid RGB - red, green, blue");
       fill_solid_rgb(stepper, delay_ms);
       break;
     case 2: //FILL_SOLID_HSV:
-      PRINT_BR_1(optionPrefix + "Solid HSV - hue, saturation, value (brightness)");
+      printHeader(1, optionPrefix + "Solid HSV - hue, saturation, value (brightness)");
       fill_solid_hsv(stepper, delay_ms);
       break;
     case 3: //FILL_RAINBOW_RGB:
-      PRINT_BR_1(optionPrefix + "Rainbow RGB");
+      printHeader(1, optionPrefix + "Rainbow RGB");
       break;
     case 4: //FILL_RAINBOW_HSV:
-      PRINT_BR_1(optionPrefix + "Rainbow HSV - hue, saturation, value (brightness)");
+      printHeader(1, optionPrefix + "Rainbow HSV - hue, saturation, value (brightness)");
       break;
     default: 
-      PRINT_BR_1(optionPrefix + "Unknown - " + option);
+      printHeader(1, optionPrefix + "Unknown - " + option);
       break;
   }
 }
@@ -127,14 +127,14 @@ void fill_solid_rgb(uint8_t stepper, uint8_t delay_ms)
    * uint16_t is 0-65,535
    */
   
-  r =   0; g =   0; b =   0; for(r =   0; r < 255; r+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "RGB [black  ] [red    ] "); }
-  r = 255; g =   0; b =   0; for(g =   0; g < 255; g+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "RGB [red    ] [yellow ] "); }
-  r = 255; g = 255; b =   0; for(r = 255; r >=  0; r-=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "RGB [yellow ] [green  ] "); }
-  r =   0; g = 255; b =   0; for(b =   0; b < 255; b+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "RGB [green  ] [cyan   ] "); }
-  r =   0; g = 255; b = 255; for(g = 255; g >=  0; g-=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "RGB [cyan   ] [blue   ] "); }
-  r =   0; g =   0; b = 255; for(r =   0; r < 255; r+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "RGB [blue   ] [magenta] "); }
-  r = 255; g =   0; b = 255; for(g =   0; g < 255; g+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "RGB [magenta] [white  ] "); }
-  x = 255;                   for(x = 255; x >=  0; x-=stepper) { fill_solid_rgb_details(delay_ms, x, x, x, "RGB [white  ] [black  ] "); }
+  r =   0; g =   0; b =   0; for(r =   0; r < 255; r+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "fill_solid(...) RGB [black  ] [red    ] "); }  FastLED.delay(1000);
+  r = 255; g =   0; b =   0; for(g =   0; g < 255; g+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "fill_solid(...) RGB [red    ] [yellow ] "); }
+  r = 255; g = 255; b =   0; for(r = 255; r >=  0; r-=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "fill_solid(...) RGB [yellow ] [green  ] "); }  FastLED.delay(1000);
+  r =   0; g = 255; b =   0; for(b =   0; b < 255; b+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "fill_solid(...) RGB [green  ] [cyan   ] "); }
+  r =   0; g = 255; b = 255; for(g = 255; g >=  0; g-=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "fill_solid(...) RGB [cyan   ] [blue   ] "); }  FastLED.delay(1000);
+  r =   0; g =   0; b = 255; for(r =   0; r < 255; r+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "fill_solid(...) RGB [blue   ] [magenta] "); }
+  r = 255; g =   0; b = 255; for(g =   0; g < 255; g+=stepper) { fill_solid_rgb_details(delay_ms, r, g, b, "fill_solid(...) RGB [magenta] [white  ] "); }
+  x = 255;                   for(x = 255; x >=  0; x-=stepper) { fill_solid_rgb_details(delay_ms, x, x, x, "fill_solid(...) RGB [white  ] [black  ] "); }
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -167,10 +167,10 @@ void fill_solid_hsv(uint8_t stepper, uint8_t delay_ms)
    */
 
   // brightness (0 - 255)
-  h =   0; s =   0; v =   0; for(v =   v; v < 255; v+=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "HSV (brightness) [black  ] [white  ] "); } FastLED.delay(1000);
+  h =   0; s =   0; v =   0; for(v =   v; v < 255; v+=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (brightness) [black  ] [white  ] "); } FastLED.delay(1000);
 
   // saturation (0 - 255)
-  h =   0; s =   0; v = 255; for(s =   0; s < 255; s+=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "HSV (saturation) [white  ] [red    ] "); } FastLED.delay(1000);
+  h =   0; s =   0; v = 255; for(s =   0; s < 255; s+=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (saturation) [white  ] [red    ] "); } FastLED.delay(1000);
 
   /* hue (0 - 255)
    *   0 - 0°   red primary
@@ -178,13 +178,13 @@ void fill_solid_hsv(uint8_t stepper, uint8_t delay_ms)
    * 170 - 240° blue primary
    * 255 - 360° red primary (again)
 */
-  h =   0; s = 255; v = 250; for(h =   0; h <  85; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "HSV (hue) [red    ] [green  ] "); } FastLED.delay(1000);
-  h =   0; s = 255; v = 250; for(h =  86; h < 170; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "HSV (hue) [green  ] [blue   ] "); } FastLED.delay(1000);
-  h =   0; s = 255; v = 250; for(h = 171; h < 255; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "HSV (hue) [blue   ] [red    ] "); } FastLED.delay(1000);
+  h =   0; s = 255; v = 250; for(h =   0; h <  85; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue) [red    ] [green  ] "); } FastLED.delay(1000);
+  h =   0; s = 255; v = 250; for(h =  86; h < 170; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue) [green  ] [blue   ] "); } FastLED.delay(1000);
+  h =   0; s = 255; v = 250; for(h = 171; h < 255; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue) [blue   ] [red    ] "); } FastLED.delay(1000);
 
   //hsv fade out
-  h =   0; s = 255; v = 255; for(s = 255; s >=   0; s-=stepper)     { fill_solid_hsv_details(delay_ms * 10, h, s, v, "HSV (saturation) [red    ] [white  ] "); } FastLED.delay(1000);
-  h =   0; s =   0; v = 255; for(v =   v; v >=   0; v-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "HSV (brightness) [white  ] [black  ] "); } FastLED.delay(1000);
+  h =   0; s = 255; v = 255; for(s = 255; s >=   0; s-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (saturation) [red    ] [white  ] "); }
+  h =   0; s =   0; v = 255; for(v =   v; v >=   0; v-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (brightness) [white  ] [black  ] "); }
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -208,28 +208,33 @@ void fill_solid_hsv_details(uint8_t delay_ms, uint8_t r, uint8_t g, uint8_t b, S
 // ------------------------------------------------------------------------------------------------------------------------
 // Misc
 // ------------------------------------------------------------------------------------------------------------------------
-void PRINT_BR_1(String message)
+void printHeader(int borderType, String message)
 {
-  Serial.println(BR_1());
-  Serial.println(message);
-  Serial.println(BR_1());
-}
-
-void PRINT_BR_2(String message)
-{
-  Serial.println(BR_2());
-  Serial.println(message);
-  Serial.println(BR_2());
-}
-
-String BR_1()
-{
-  return "=============================================================================";
-}
-
-String BR_2()
-{
-  return "-----------------------------------------------------------------------------";
+  String border;
+  switch(borderType)
+  {
+    case 1:
+      border = "=============================================================================";
+      break;
+    case 2:
+      border = "-----------------------------------------------------------------------------";
+      break;
+    default:
+      border = "";
+      break;
+    
+  }
+  
+  if(border == "")
+  {
+    Serial.println(message);
+  }
+  else
+  {
+    Serial.println(border);
+    Serial.println(message);
+    Serial.println(border);
+  }
 }
       
 //EOL
