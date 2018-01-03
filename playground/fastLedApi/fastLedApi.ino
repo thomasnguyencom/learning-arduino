@@ -67,10 +67,11 @@ void loop()
   //fill_examples(3); // FILL_RAINBOW_RGB
   //fill_examples(4); // FILL_RAINBOW_HSV
   
-  //fill_examples(5); // FILL_GRADIENT_RGB
-  fill_examples(6); // FILL_GRADIENT_HSV
+  fill_examples(5); // FILL_GRADIENT_HSV_CODE
+  //fill_examples(6); // FILL_GRADIENT_HSV
   
   printHeader(99, "Loop ended");
+   FastLED.delay(5000);
 }
 
 // ========================================================================================================================
@@ -109,9 +110,9 @@ void fill_examples(uint8_t option)
       printHeader(2, optionPrefix + "Fill Rainbow HSV - hue, saturation, value (brightness)");
       fill_rainbow_hsv(stepper, delay_ms);
       break;
-    case 5: //FILL_GRADIENT_RGB:
-      printHeader(2, optionPrefix + "Fill Gradient RGB");
-      //fill_gradient_rgb(stepper, delay_ms);
+    case 5: //FILL_GRADIENT_HSV_CODES:
+      printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
+      fill_gradient_hsv_codes(stepper, delay_ms);
       break;
     case 6: //FILL_GRADIENT_HSV:
       printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
@@ -186,10 +187,10 @@ void fill_solid_hsv(uint8_t stepper, uint8_t delay_ms)
    */
 
   // brightness (0 - 255)
-  h =   0; s =   0; v =   0; for(v =   v; v < 255; v+=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (brightness) [black  ] [white  ] "); } FastLED.delay(1000);
+  h =   0; s =   0; v =   0; for(v =   v; v < 255; v+=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (brightness) [black : white] "); } FastLED.delay(1000);
 
   // saturation (0 - 255)
-  h =   0; s =   0; v = 255; for(s =   0; s < 255; s+=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (saturation) [white  ] [red    ] "); } FastLED.delay(1000);
+  h =   0; s =   0; v = 255; for(s =   0; s < 255; s+=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (saturation) [white : red  ] "); } FastLED.delay(1000);
 
   /* hue (0 - 255)
    *   0 - 0°   red primary
@@ -197,13 +198,13 @@ void fill_solid_hsv(uint8_t stepper, uint8_t delay_ms)
    * 170 - 240° blue primary
    * 255 - 360° red primary (again)
 */
-  h =   0; s = 255; v = 250; for(h =   0; h <  85; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue) [red    ] [green  ] "); } FastLED.delay(1000);
-  h =   0; s = 255; v = 250; for(h =  86; h < 170; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue) [green  ] [blue   ] "); } FastLED.delay(1000);
-  h =   0; s = 255; v = 250; for(h = 171; h < 255; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue) [blue   ] [red    ] "); } FastLED.delay(1000);
+  h =   0; s = 255; v = 250; for(h =   0; h <  85; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue       ) [R     : G    ] "); } FastLED.delay(1000);
+  h =   0; s = 255; v = 250; for(h =  86; h < 170; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue       ) [G     : B    ] "); } FastLED.delay(1000);
+  h =   0; s = 255; v = 250; for(h = 171; h < 255; h+=(stepper/2)) { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (hue       ) [B     : R    ] "); } FastLED.delay(1000);
 
   //hsv fade out
-  h =   0; s = 255; v = 255; for(s = 255; s >=   0; s-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (saturation) [red    ] [white  ] "); } FastLED.delay(1000);
-  h =   0; s =   0; v = 255; for(v =   v; v >=   0; v-=stepper)     { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (brightness) [white  ] [black  ] "); } FastLED.delay(1000);
+  h =   0; s = 255; v = 255; for(s = 255; s >=   0; s-=stepper)    { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (saturation) [red   : white] "); } FastLED.delay(1000);
+  h =   0; s =   0; v = 255; for(v =   v; v >=   0; v-=stepper)    { fill_solid_hsv_details(delay_ms, h, s, v, "fill_solid(...) HSV (brightness) [white : black] "); } FastLED.delay(1000);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -251,33 +252,18 @@ void fill_rainbow_hsv(uint8_t stepper, uint8_t delay_ms)
 // ------------------------------------------------------------------------------------------------------------------------
 void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms)
 {
-  uint8_t deltahue = 8;
-  /* fill_gradient (
-        T *targetArray, 
-        uint16_t startpos, 
-        CHSV startcolor, 
-        uint16_t endpos, 
-        CHSV endcolor, 
-        TGradientDirectionCode directionCode=SHORTEST_HUES) FORWARD_HUES, BACKWARD_HUES, SHORTEST_HUES, LONGEST_HUES */
+  uint8_t lastLed = NUM_LEDS - 1;
 
-  uint8_t startPosition = 0;
-  uint8_t endPosition = 0;
-
-  //startPosition = 0;               endPosition = startPosition + 3; fill_gradient_hsv(stepper, delay_ms, startPosition,   0, endPosition,  85, "Rainbow 1/3 - ");
-  //startPosition = endPosition + 2; endPosition = startPosition + 3; fill_gradient_hsv(stepper, delay_ms, startPosition,  86, endPosition, 170, "Rainbow 2/3 - ");
-  //startPosition = endPosition + 2; endPosition = startPosition + 3; fill_gradient_hsv(stepper, delay_ms, startPosition, 171, endPosition, 255, "Rainbow 3/3 - ");
-
-  fill_examples(0); //FILL_RESET
-  for(uint8_t pos =              0; pos < NUM_LEDS; pos += 1) { fill_gradient_hsv(stepper, delay_ms,               0, CHSV(  0, 255, 255), pos, CHSV( 85, 255, 255), "Expand - (red - green)"); }
-  for( int8_t pos = (NUM_LEDS - 1); pos >= 0      ; pos -= 1) { fill_gradient_hsv(stepper, delay_ms,  (NUM_LEDS - 1), CHSV( 86, 255, 255), pos, CHSV(170, 255, 255), "Expand - (green - blue)"); }
-  for(uint8_t pos =              0; pos < NUM_LEDS; pos += 1) { fill_gradient_hsv(stepper, delay_ms,               0, CHSV(171, 255, 255), pos, CHSV(255, 255, 255), "Expand - (blue - red)"); }
-  for( int8_t pos = (NUM_LEDS - 1); pos >= 0      ; pos -= 1) { fill_gradient_hsv(stepper, delay_ms,  (NUM_LEDS - 1), CHSV(  0,   0,   0), pos, CHSV(  0,   0,   0), "Expand - (red - black)"); }
-  
-
-  fill_examples(0); //FILL_RESET
+  for(uint8_t pos = 0      ; pos < NUM_LEDS; pos += 1) { fill_gradient_hsv(stepper, delay_ms, 0      , pos, CHSV(HUE_RED  , 255, 255), CHSV(HUE_GREEN, 255, 255), SHORTEST_HUES, "fill_gradient(...) HSV sweep [black : R-G  ] "); }
+  for( int8_t pos = lastLed; pos >= 0      ; pos -= 1) { fill_gradient_hsv(stepper, delay_ms, lastLed, pos, CHSV(HUE_GREEN, 255, 255), CHSV(HUE_BLUE , 255, 255), SHORTEST_HUES, "fill_gradient(...) HSV sweep [R-G   : B-G  ] "); }
+  for(uint8_t pos = 0      ; pos < NUM_LEDS; pos += 1) { fill_gradient_hsv(stepper, delay_ms, 0      , pos, CHSV(HUE_BLUE , 255, 255), CHSV(HUE_RED  , 255, 255), SHORTEST_HUES, "fill_gradient(...) HSV sweep [B-G   : B-R  ] "); }
+  for( int8_t pos = lastLed; pos >= 0      ; pos -= 1) { fill_gradient_hsv(stepper, delay_ms, lastLed, pos, CHSV(HUE_RED  ,   0,   0), CHSV(      0  ,   0,   0), SHORTEST_HUES, "fill_gradient(...) HSV sweep [B-R   : black] "); }
 }
 
-void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms, uint16_t startPosition, CHSV startHue, uint16_t endPosition, CHSV endHue, String prefix)
+// ------------------------------------------------------------------------------------------------------------------------
+// void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms, uint16_t startPosition, uint16_t endPosition, CHSV startHue, CHSV endHue, String prefix)
+// ------------------------------------------------------------------------------------------------------------------------
+void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms, uint16_t startPosition, uint16_t endPosition, CHSV startHue, CHSV endHue, TGradientDirectionCode code, String prefix)
 {
   //String hues = "Hues (" + String(startHue) + ", " + String(endHue) + ")";
   String range = "Range (" + String(startPosition) + ", " + String(endPosition) + ")";
@@ -285,10 +271,37 @@ void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms, uint16_t startPosition
   
   Serial.println(output);
   
-  fill_gradient(_leds, startPosition, startHue, endPosition, endHue, SHORTEST_HUES); 
+  fill_gradient(_leds, startPosition, startHue, endPosition, endHue, code); 
   
   FastLED.show(); 
   FastLED.delay(delay_ms);
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms)
+// ------------------------------------------------------------------------------------------------------------------------
+void fill_gradient_hsv_codes(uint8_t stepper, uint8_t delay_ms)
+{
+  // HUE_RED    =   0 
+  // HUE_ORANGE =  32  
+  // HUE_YELLOW =  64  
+  // HUE_GREEN  =  96  
+  // HUE_AQUA   = 128  
+  // HUE_BLUE   = 160  
+  // HUE_PURPLE = 192  
+  // HUE_PINK   = 224
+
+  fill_gradient_hsv(stepper, 0,  0,  14, CHSV(HUE_RED, 255, 255), CHSV(HUE_BLUE  , 255, 255), FORWARD_HUES , "fill_gradient(...) HSV forward  [R-O-Y-G-A-B  ] ");
+  fill_gradient_hsv(stepper, 0,  15, 29, CHSV(HUE_RED, 255, 255), CHSV(HUE_BLUE  , 255, 255), BACKWARD_HUES, "fill_gradient(...) HSV backward [R-P-P-B      ] ");
+  FastLED.delay(3 * 1000);
+  
+  fill_gradient_hsv(stepper, 0,  0,  14, CHSV(HUE_RED, 255, 255), CHSV(HUE_BLUE  , 255, 255), SHORTEST_HUES , "fill_gradient(...) HSV forward  [R-P-P-B      ] ");
+  fill_gradient_hsv(stepper, 0,  15, 29, CHSV(HUE_RED, 255, 255), CHSV(HUE_BLUE  , 255, 255), LONGEST_HUES  , "fill_gradient(...) HSV backward [R-O-Y-G-A-B  ] ");
+  FastLED.delay(3 * 1000);
+
+  fill_gradient_hsv(stepper, 0,  0,  14, CHSV(HUE_RED, 255, 255), CHSV( HUE_GREEN, 255, 255), SHORTEST_HUES, "fill_gradient(...) HSV shortest [R-O-Y-G      ] ");
+  fill_gradient_hsv(stepper, 0,  15, 29, CHSV(HUE_RED, 255, 255), CHSV( HUE_GREEN, 255, 255), LONGEST_HUES , "fill_gradient(...) HSV longest  [R-P-P-B-A-G  ] ");
+  FastLED.delay(3 * 1000);
 }
 
 // ========================================================================================================================
@@ -304,13 +317,13 @@ void printHeader(int borderType, String message)
   switch(borderType)
   {
     case 1:
-      border = "=====-=====-=====-=====-=====-=====-=====";
+      border = "=========================================";
       break;
     case 2:
-      border = "-----.-----.-----.-----.-----.-----.-----";
+      border = "*****************************************";
       break;
     case 99:
-      border = ".....-.....-.....-.....-.....-.....-.....";
+      border = ".........................................";
       break;
     default:
       border = "";
