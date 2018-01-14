@@ -22,8 +22,9 @@
 //        reduce noise on that line.
 // -[5V]  Connects to a +5V power supply
 // ------------------------------------------------------------------------------------------------------------------------
-//#define NUM_LEDS           150 / (10) // whole strip
-#define NUM_LEDS           30 // my mini strips (15 each)
+//#define NUM_LEDS           150 // whole strip
+#define NUM_LEDS           105 // whole strip
+//#define NUM_LEDS           30 // my mini strips (15 each)
 CRGB _leds[NUM_LEDS];
 //CRGB _leds[NUM_LEDS];
 #define BRIGHTNESS         64
@@ -67,8 +68,14 @@ void loop()
   //fill_examples(3); // FILL_RAINBOW_RGB
   //fill_examples(4); // FILL_RAINBOW_HSV
   
-  fill_examples(5); // FILL_GRADIENT_HSV_CODE
-  //fill_examples(6); // FILL_GRADIENT_HSV
+  //fill_examples(5); // FILL_GRADIENT_HSV_RANGE
+  //fill_examples(6); // FILL_GRADIENT_HSV_DIRECTION_CODE
+  //fill_examples(7); // FILL_GRADIENT_HSV_TWO
+  //fill_examples(8); // FILL_GRADIENT_HSV_THREE
+  //fill_examples(9); // FILL_GRADIENT_HSV_FOUR
+  
+  fill_examples(10); // FADE_LIGHT_BY
+  fill_examples(11); // FADE_TO_BLACK_BY
   
   printHeader(99, "Loop ended");
    FastLED.delay(5000);
@@ -110,15 +117,35 @@ void fill_examples(uint8_t option)
       printHeader(2, optionPrefix + "Fill Rainbow HSV - hue, saturation, value (brightness)");
       fill_rainbow_hsv(stepper, delay_ms);
       break;
-    case 5: //FILL_GRADIENT_HSV_CODES:
-      printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
-      fill_gradient_hsv_codes(stepper, delay_ms);
-      break;
-    case 6: //FILL_GRADIENT_HSV:
+    case 5: //FILL_GRADIENT_HSV_RANGE:
       printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
       fill_gradient_hsv(stepper, delay_ms);
       break;
-    default: 
+    case 6: //FILL_GRADIENT_HSV_DIRECTION_CODE:
+      printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
+      fill_gradient_hsv_codes(stepper, delay_ms);
+      break;
+    case 7: //FILL_GRADIENT_HSV_TWO:
+      printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
+      fill_gradient_hsv_two(stepper, delay_ms);
+      break;
+    case 8: //FILL_GRADIENT_HSV_THREE:
+      printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
+      fill_gradient_hsv_three(stepper, delay_ms);
+      break;
+    case 9: //FILL_GRADIENT_HSV_FOUR:
+      printHeader(2, optionPrefix + "Fill Gradient HSV - hue, saturation, value (brightness)");
+      fill_gradient_hsv_four(stepper, delay_ms);
+      break;
+    case 10: //FADE_LIGHT_BY:
+      printHeader(2, optionPrefix + "Fade Light by");
+      fade_light_by(stepper, delay_ms);
+      break;
+    case 11: //FADE_TO_BLACK_BY:
+      printHeader(2, optionPrefix + "Fade to Black by");
+      fade_to_black_by(stepper, delay_ms);
+      break;
+    default:
       printHeader(2, optionPrefix + "Unknown - " + option);
       break;
   }
@@ -245,10 +272,14 @@ void fill_rainbow_hsv(uint8_t stepper, uint8_t delay_ms)
   FastLED.delay(2000);
 }
 
-// ************
-
 // ------------------------------------------------------------------------------------------------------------------------
 // void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms)
+// fill_gradient (T *targetArray, 
+//   uint16_t startpos, 
+//   CHSV startcolor, 
+//   uint16_t endpos, 
+//   CHSV endcolor, 
+//   TGradientDirectionCode directionCode=SHORTEST_HUES)
 // ------------------------------------------------------------------------------------------------------------------------
 void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms)
 {
@@ -278,7 +309,13 @@ void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms, uint16_t startPosition
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
-// void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms)
+// void fill_gradient_hsv_codes(uint8_t stepper, uint8_t delay_ms)
+// fill_gradient (T *targetArray, 
+//   uint16_t startpos, 
+//   CHSV startcolor, 
+//   uint16_t endpos, 
+//   CHSV endcolor, 
+//   TGradientDirectionCode directionCode=SHORTEST_HUES)
 // ------------------------------------------------------------------------------------------------------------------------
 void fill_gradient_hsv_codes(uint8_t stepper, uint8_t delay_ms)
 {
@@ -302,6 +339,108 @@ void fill_gradient_hsv_codes(uint8_t stepper, uint8_t delay_ms)
   fill_gradient_hsv(stepper, 0,  0,  14, CHSV(HUE_RED, 255, 255), CHSV( HUE_GREEN, 255, 255), SHORTEST_HUES, "fill_gradient(...) HSV shortest [R-O-Y-G      ] ");
   fill_gradient_hsv(stepper, 0,  15, 29, CHSV(HUE_RED, 255, 255), CHSV( HUE_GREEN, 255, 255), LONGEST_HUES , "fill_gradient(...) HSV longest  [R-P-P-B-A-G  ] ");
   FastLED.delay(3 * 1000);
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fill_gradient_hsv(uint8_t stepper, uint8_t delay_ms)
+// fill_gradient (T *targetArray, 
+//   uint16_t numLeds, 
+//   const CHSV &c1, 
+//   const CHSV &c2, 
+//   TGradientDirectionCode directionCode=SHORTEST_HUES)
+// ------------------------------------------------------------------------------------------------------------------------
+void fill_gradient_hsv_two(uint8_t stepper, uint8_t delay_ms)
+{
+  fill_gradient (_leds, NUM_LEDS, CHSV (HUE_RED, 255, 255), CHSV (HUE_GREEN, 255, 255), SHORTEST_HUES);
+  
+  FastLED.show();
+  FastLED.delay(3 * 1000);
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fill_gradient_hsv_three(uint8_t stepper, uint8_t delay_ms)
+// fill_gradient (T *targetArray, 
+//   uint16_t numLeds, 
+//   const CHSV &c1, 
+//   const CHSV &c2, 
+//   const CHSV &c3, 
+//   TGradientDirectionCode directionCode=SHORTEST_HUES)
+// ------------------------------------------------------------------------------------------------------------------------
+void fill_gradient_hsv_three(uint8_t stepper, uint8_t delay_ms)
+{
+  fill_gradient (_leds, NUM_LEDS, CHSV (HUE_RED, 255, 255), CHSV (HUE_GREEN, 255, 255), CHSV (HUE_RED, 255, 255), SHORTEST_HUES);
+  
+  FastLED.show();
+  FastLED.delay(3 * 1000);
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fill_gradient_hsv_four(uint8_t stepper, uint8_t delay_ms)
+// fill_gradient (T *targetArray, 
+//   uint16_t numLeds, 
+//   const CHSV &c1, 
+//   const CHSV &c2, 
+//   const CHSV &c3, 
+//   TGradientDirectionCode directionCode=SHORTEST_HUES)
+// ------------------------------------------------------------------------------------------------------------------------
+void fill_gradient_hsv_four(uint8_t stepper, uint8_t delay_ms)
+{
+  fill_gradient (_leds, NUM_LEDS, CHSV (HUE_RED, 255, 255), CHSV (HUE_GREEN, 255, 255), CHSV (HUE_RED, 255, 255), CHSV (HUE_GREEN, 255, 255), SHORTEST_HUES);
+  
+  FastLED.show();
+  FastLED.delay(3 * 1000);
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fade_light_by(uint8_t stepper, uint8_t delay_ms)
+// fadeLightBy (CRGB *leds, uint16_t num_leds, uint8_t fadeBy)
+// ------------------------------------------------------------------------------------------------------------------------
+void fade_light_by(uint8_t stepper, uint8_t delay_ms)
+{
+  String output = "Show gradient";
+  Serial.println(output);
+  
+  fill_gradient(_leds, NUM_LEDS, CHSV (HUE_RED, 255, 255), CHSV (HUE_GREEN, 255, 255), CHSV (HUE_BLUE, 255, 255), CHSV (HUE_RED, 255, 255), SHORTEST_HUES);
+  
+  FastLED.show();
+  FastLED.delay(1000);
+
+  for(uint8_t counter = 0; counter < 255; counter++)
+  {
+    String output = "fade_light_by: " + String(counter);
+    Serial.println(output);
+    
+    fadeLightBy(_leds, NUM_LEDS, 8);
+
+    FastLED.show();
+    FastLED.delay(10);
+  }
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fade_to_black_by(uint8_t stepper, uint8_t delay_ms)
+// fadeToBlackBy (CRGB *leds, uint16_t num_leds, uint8_t fadeBy)
+// ------------------------------------------------------------------------------------------------------------------------
+void fade_to_black_by(uint8_t stepper, uint8_t delay_ms)
+{
+  String output = "Show gradient";
+  Serial.println(output);
+  
+  fill_gradient (_leds, NUM_LEDS, CHSV (HUE_RED, 255, 255), CHSV (HUE_GREEN, 255, 255), CHSV (HUE_BLUE, 255, 255), CHSV (HUE_RED, 255, 255), SHORTEST_HUES);
+  
+  FastLED.show();
+  FastLED.delay(1000);
+
+  for(uint8_t counter = 0; counter < 255; counter++)
+  {
+    String output = "fadeToBlackBy: " + String(counter);
+    Serial.println(output);
+    
+    fadeToBlackBy(_leds, NUM_LEDS, 8);
+
+    FastLED.show();
+    FastLED.delay(10);
+  }
 }
 
 // ========================================================================================================================
