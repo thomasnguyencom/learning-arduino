@@ -91,7 +91,13 @@
 //                                                                 0: ESP8266 runs as client
 //                                                                 1: ESP8266 runs as server
 
+void setup()
+{
+}
 
+void loop()
+{
+}
 
 
 //EOL
