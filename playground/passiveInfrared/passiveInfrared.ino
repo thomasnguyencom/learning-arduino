@@ -4,6 +4,10 @@
 // OUT inputPin
 // GND Ground
 
+// When the dials are facing you
+// Left: sensitivity
+// Right: time delay
+
 int ledPin = 8;                // choose the pin for the LED
 int inputPin = 7;               // choose the input pin (for PIR sensor)
 int pirState = LOW;             // we start, assuming no motion detected
