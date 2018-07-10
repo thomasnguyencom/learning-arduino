@@ -19,7 +19,6 @@
 // GLOBAL
 // ========================================================================================================================
 // Global variables
-int ledPin = 8;                // choose the pin for the LED
 int pirState = LOW;            // we start, assuming no motion detected
 int val = 0;                   // variable for reading the pin status
 String pirStatus = "OFF";
@@ -41,6 +40,12 @@ int inputPin = 7;               // choose the input pin (for PIR sensor)
 // ------------------------------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------------------------------------
+// INIT : LED Pin
+// ------------------------------------------------------------------------------------------------------------------------
+int ledPin = 8;                // choose the pin for the LED
+// ------------------------------------------------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------------------------------------
 // INIT : WS2812B Multi-Color Strip
 // ------------------------------------------------------------------------------------------------------------------------
 // Wire configuration
@@ -50,15 +55,18 @@ int inputPin = 7;               // choose the input pin (for PIR sensor)
 // -[5V]  Connects to a +5V power supply
 // ------------------------------------------------------------------------------------------------------------------------
 #define UPDATES_PER_SECOND 100
-#define NUM_LEDS           150
+#define NUM_LEDS           15
 CRGB leds[NUM_LEDS];
 #define BRIGHTNESS         64
 #define LED_TYPE           WS2812B
 #define COLOR_ORDER        GRB
 
 // Pin assignments
-#define FAST_LED_PIN        2
+#define FAST_LED_PIN        9
 
+uint8_t stepper = 8;
+uint8_t delay_ms = 10;
+uint8_t max_bright = 255;
 // ========================================================================================================================
 // MAIN
 // ========================================================================================================================
@@ -73,7 +81,7 @@ void setup() {
   FastLED.addLeds<LED_TYPE, FAST_LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(  BRIGHTNESS );
   
-  //pinMode(ledPin, OUTPUT);      // declare LED as output
+  pinMode(ledPin, OUTPUT);      // declare LED as output
   pinMode(inputPin, INPUT);     // declare sensor as input
  
   Serial.begin(9600);
@@ -83,45 +91,50 @@ void setup() {
 // loop
 // ------------------------------------------------------------------------------------------------------------------------
 void loop(){
+  boolean showChange = false;
+  uint8_t secondHand = (millis() / 1000) % 60;
+  uint8_t minuteHand = ((millis() / 1000) / 60) % 60;
+  uint8_t hourHand = ((millis() / 1000) / 60 / 60) % 60;
+  
+// ------------------------------------------------------------------------------------------------------------------------
+
   val = digitalRead(inputPin);  // read input value
   
   if (val == HIGH) {            // check if the input is HIGH
     digitalWrite(ledPin, HIGH);  // turn LED ON
     if (pirState == LOW) {
-      Serial.println("Motion detected!");
       pirStatus = "ON";
       
+      Serial.println("[" + String(secondHand) + "] " + pirStatus);
+      fade_light_by(stepper, delay_ms);
+      
+      showChange = true;
       // We only want to print on the output change, not state
       pirState = HIGH;
     }
   } else {
     digitalWrite(ledPin, LOW); // turn LED OFF
     if (pirState == HIGH){
-      Serial.println("Motion ended!");
       pirStatus = "OFF";
       
+      Serial.println("[" + String(secondHand) + "] " + pirStatus);
+      fade_to_black_by(stepper, delay_ms);
+      
+      showChange = true;
       // We only want to print on the output change, not state
       pirState = LOW;
     }
   }
-
 // ------------------------------------------------------------------------------------------------------------------------
-
-  String paletteOutput = PalettePicker(val);
-  
-  static uint8_t startIndex = 0;
-  startIndex = startIndex + 1;    
-  FillLEDsFromPaletteColors( startIndex);
   
   FastLED.show();
   FastLED.delay(1000 / UPDATES_PER_SECOND);
 
-// ------------------------------------------------------------------------------------------------------------------------
-
-  uint8_t secondHand = (millis() / 1000) % 60;
-  uint8_t minuteHand = ((millis() / 1000) % 60) % 60;
-  
-  Serial.println("[" + String(minuteHand) + ":" + String(secondHand) + "] " + pirStatus);
+  if(showChange)
+  {
+    Serial.println("[" + String(hourHand) + " hour(s), " + String(minuteHand) + " minute(s), " + String(secondHand) + " second(s)] " + pirStatus);
+    showChange = false;
+  }
   
   //delay(1000);
 }
@@ -131,116 +144,45 @@ void loop(){
 // ========================================================================================================================
 
 // ------------------------------------------------------------------------------------------------------------------------
-// FillLEDsFromPaletteColors
+// void fade_light_by(uint8_t stepper, uint8_t delay_ms)
+// fadeLightBy (CRGB *leds, uint16_t num_leds, uint8_t fadeBy)
 // ------------------------------------------------------------------------------------------------------------------------
-void FillLEDsFromPaletteColors( uint8_t colorIndex)
+void fade_light_by(uint8_t stepper, uint8_t delay_ms)
 {
-  uint8_t brightness = 255;
+  fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
   
-  for( int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
-    colorIndex += 3;
+  for(uint16_t counter = 0; counter < max_bright; counter+=stepper)
+  {
+    String output = "fade_light_by: " + String(counter);
+    Serial.println(output);
+    
+    fill_solid(leds, NUM_LEDS, CRGB(counter, counter, counter));
+    FastLED.show();
   }
+
+  fill_solid(leds, NUM_LEDS, CRGB(max_bright, max_bright, max_bright));
+  FastLED.show();
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
-// PalettePicker
+// void fade_to_black_by(uint8_t stepper, uint8_t delay_ms)
+// fadeToBlackBy (CRGB *leds, uint16_t num_leds, uint8_t fadeBy)
 // ------------------------------------------------------------------------------------------------------------------------
-String PalettePicker(boolean stat)
+void fade_to_black_by(uint8_t stepper, uint8_t delay_ms)
 {
-  uint8_t paletteArrayLength = 6;
+  fill_solid(leds, NUM_LEDS, CRGB(255, 255, 255));
   
-  unsigned long totalSeconds = millis() / 1000;
-  unsigned long seconds = totalSeconds % 60;
-  
-  unsigned long totalMinutes = ( totalSeconds / 60 );
-  unsigned long minutes = totalMinutes % 60;
-  
-  unsigned long totalHours = ( totalMinutes / 60 );
-  
-  unsigned long pointer = ( totalMinutes / 15 ) % ( paletteArrayLength);
-  
-  unsigned long i = 0;
-  if( pointer == i++) { currentBlending = LINEARBLEND; GetPalette(PALETTE_GLOW); }
-
-  String displayHours = "";
-  if(totalHours < 10)
+  for(uint16_t counter = 0; counter < max_bright; counter+=stepper)
   {
-    displayHours = "0" + String(totalHours);
-  }
-  else
-  {
-    displayHours = String(totalHours);
-  }
-  
-  String displayMinutes = "";
-  if(minutes < 10)
-  {
-    displayMinutes = "0" + String(minutes);
-  }
-  else
-  {
-    displayMinutes = String(minutes);
-  }
-  
-  String displaySeconds = "";
-  if(seconds < 10)
-  {
-    displaySeconds = "0" + String(seconds);
-  }
-  else
-  {
-    displaySeconds = String(seconds);
+    String output = "fadeToBlackBy: " + String(counter);
+    Serial.println(output);
+    
+    fadeToBlackBy(leds, NUM_LEDS, stepper);
+    FastLED.show();
   }
 
-  String displayTime = displayHours + ":" + displayMinutes + ":" + displaySeconds;
-  String displayPalette = String(pointer + 1) + "-" + currentPaletteName;
-  
-  return displayTime + " " + displayPalette;
-}
-
-// ========================================================================================================================
-// PALETTE FUNCTIONS
-// ========================================================================================================================
-
-// ------------------------------------------------------------------------------------------------------------------------
-// GetPalette
-// ------------------------------------------------------------------------------------------------------------------------
-void GetPalette(String paletteName)
-{
-  if( paletteName == PALETTE_GLOW)
-  {
-    SetupGlowPalette();
-  }
-  else
-  {
-    paletteName = "UNKNOWN";
-  }
-
-  currentPaletteName = paletteName;
-}
-
-// ------------------------------------------------------------------------------------------------------------------------
-// SetupGlowPalette
-// ------------------------------------------------------------------------------------------------------------------------
-void SetupGlowPalette()
-{
-  int r = 0;
-  int g = 0;
-  int b = 0;
-  
-  int cnt = 256 / 4;
-  
-  CRGB c_0 = CRGB(   0,   0,   0); //
-  CRGB c_1 = CRGB(  50,  50,  50); //
-  CRGB c_9 = CRGB(  25,  25,  25); //
-  
-  currentPalette = CRGBPalette16(
-    c_1, c_0, c_1, c_0,
-    c_1, c_0, c_1, c_0,
-    c_1, c_0, c_1, c_0,
-    c_1, c_0, c_1, c_0
-  );
+  fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
+  FastLED.show();
 }
 
 //EOL
