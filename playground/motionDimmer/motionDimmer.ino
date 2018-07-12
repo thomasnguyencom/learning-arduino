@@ -11,22 +11,13 @@
 // OUT inputPin
 // GND Ground
 // ------------------------------------------------------------------------------------------------------------------------
-// When the dials are facing you
-// Left: sensitivity
-// Right: time delay
 
 // ========================================================================================================================
 // GLOBAL
 // ========================================================================================================================
 // Global variables
-int pirState = LOW;            // we start, assuming no motion detected
-int val = 0;                   // variable for reading the pin status
-String pirStatus = "OFF";
-
-TBlendType    currentBlending;
-CRGBPalette16 currentPalette;
-String        currentPaletteName;
-int           currentPalettePointer = 0;
+boolean _pirLastStatus = LOW; // start, assuming no motion detected
+boolean _pirActualStatus = LOW; // variable for reading the pin status
 
 String PALETTE_GLOW      = "Glow";
 
@@ -64,7 +55,7 @@ CRGB leds[NUM_LEDS];
 // Pin assignments
 #define FAST_LED_PIN        9
 
-uint8_t stepper = 8;
+uint8_t stepper = 2;
 uint8_t delay_ms = 10;
 uint8_t max_bright = 255;
 // ========================================================================================================================
@@ -81,48 +72,44 @@ void setup() {
   FastLED.addLeds<LED_TYPE, FAST_LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(  BRIGHTNESS );
   
-  pinMode(ledPin, OUTPUT);      // declare LED as output
-  pinMode(inputPin, INPUT);     // declare sensor as input
+  pinMode(ledPin, OUTPUT);
+  pinMode(inputPin, INPUT);
  
   Serial.begin(9600);
+
+  ledBlink(100);
+  ledBlink(100);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
 // loop
 // ------------------------------------------------------------------------------------------------------------------------
 void loop(){
-  boolean showChange = false;
-  uint8_t secondHand = (millis() / 1000) % 60;
-  uint8_t minuteHand = ((millis() / 1000) / 60) % 60;
-  uint8_t hourHand = ((millis() / 1000) / 60 / 60) % 60;
+  boolean isPirChanged = false;
   
 // ------------------------------------------------------------------------------------------------------------------------
 
-  val = digitalRead(inputPin);  // read input value
+  _pirActualStatus = digitalRead(inputPin);  // read input value
+  digitalWrite(ledPin, _pirActualStatus);
   
-  if (val == HIGH) {            // check if the input is HIGH
-    digitalWrite(ledPin, HIGH);  // turn LED ON
-    if (pirState == LOW) {
-      pirStatus = "ON";
+  if (_pirActualStatus == HIGH)
+  {
+    if (_pirLastStatus == LOW)
+    {
+      isPirChanged = true;
+      _pirLastStatus = _pirActualStatus;
       
-      Serial.println("[" + String(secondHand) + "] " + pirStatus);
-      fade_light_by(stepper, delay_ms);
-      
-      showChange = true;
-      // We only want to print on the output change, not state
-      pirState = HIGH;
+      fade(_pirActualStatus, stepper, delay_ms);
     }
-  } else {
-    digitalWrite(ledPin, LOW); // turn LED OFF
-    if (pirState == HIGH){
-      pirStatus = "OFF";
-      
-      Serial.println("[" + String(secondHand) + "] " + pirStatus);
-      fade_to_black_by(stepper, delay_ms);
-      
-      showChange = true;
-      // We only want to print on the output change, not state
-      pirState = LOW;
+  }
+  else
+  {
+    if (_pirLastStatus == HIGH)
+    {
+      isPirChanged = true;
+      _pirLastStatus = _pirActualStatus;
+
+      fade(_pirActualStatus, stepper, delay_ms);
     }
   }
 // ------------------------------------------------------------------------------------------------------------------------
@@ -130,13 +117,12 @@ void loop(){
   FastLED.show();
   FastLED.delay(1000 / UPDATES_PER_SECOND);
 
-  if(showChange)
+  if(isPirChanged)
   {
-    Serial.println("[" + String(hourHand) + " hour(s), " + String(minuteHand) + " minute(s), " + String(secondHand) + " second(s)] " + pirStatus);
-    showChange = false;
+    Serial.println("[" + convertToTimeStamp(millis()) + "] " + convertPirStatusToMessage(_pirActualStatus));
+    
+    isPirChanged = false; //reset
   }
-  
-  //delay(1000);
 }
 
 // ========================================================================================================================
@@ -183,6 +169,93 @@ void fade_to_black_by(uint8_t stepper, uint8_t delay_ms)
 
   fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
   FastLED.show();
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void fade(boolean type, uint8_t stepper, uint8_t delay_ms)
+// ------------------------------------------------------------------------------------------------------------------------
+void fade(boolean type, uint8_t stepper, uint8_t delay_ms)
+{
+  if(type == HIGH)
+  {
+    fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
+  }
+  else
+  {
+    fill_solid(leds, NUM_LEDS, CRGB(255, 255, 255));
+  }
+  
+  for(uint16_t counter = 0; counter < max_bright; counter+=stepper)
+  {    
+    if(type == HIGH)
+    {
+      fill_solid(leds, NUM_LEDS, CRGB(counter, counter, counter));
+    }
+    else
+    {
+      fadeToBlackBy(leds, NUM_LEDS, stepper);
+    }
+    
+    FastLED.show();
+  }
+
+  if(type == HIGH)
+  {
+    fill_solid(leds, NUM_LEDS, CRGB(max_bright, max_bright, max_bright));
+  }
+  else
+  {
+    fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
+  }
+  
+  FastLED.show();
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void ledBlink(uint8_t delay_ms)
+// ------------------------------------------------------------------------------------------------------------------------
+void ledBlink(uint8_t delay_ms)
+{
+  digitalWrite(ledPin, HIGH);
+  delay(delay_ms);
+  
+  digitalWrite(ledPin, LOW);
+  delay(delay_ms);
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void convertToTimeStamp(long ms)
+// ------------------------------------------------------------------------------------------------------------------------
+String convertPirStatusToMessage(boolean pirStatus)
+{
+  if(pirStatus == HIGH)
+  {
+    return "ON";
+  }
+  else
+  {
+    return "OFF";
+  }
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// void convertToTimeStamp(long ms)
+// ------------------------------------------------------------------------------------------------------------------------
+String convertToTimeStamp(long milliseconds)
+{
+  uint16_t millisHand = ( milliseconds % 1000);
+  uint8_t secondHand  = ( milliseconds / 1000) % 60;
+  uint8_t minuteHand  = ((milliseconds / 1000) / 60) % 60;
+  uint8_t hourHand    = ((milliseconds / 1000) / 60  / 60) % 60;
+  
+  String hh = String(hourHand) + " hour(s)";
+  String mm = String(minuteHand) + " minute(s)";
+  String ss = String(secondHand) + " second(s)";
+  String ms = String(millisHand) + " milli(s)";
+  
+  String timeStamp = hh + ", " + mm + ", " + ss + ", " + ms;
+
+  return timeStamp;
 }
 
 //EOL
