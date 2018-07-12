@@ -8,6 +8,13 @@
 // When the dials are facing you
 // Left: sensitivity
 // Right: time delay
+//   Low   High  Dial
+//   mm:ss mm:ss Clock Face
+//   00:03 00:04 08:00 (lowest)
+//               09:30
+//   01:08 01:10 11:00 (middle)
+//               12:30
+//   02:23 02:51 14:00 (highest)
 
 // ========================================================================================================================
 // GLOBAL
@@ -52,9 +59,12 @@ void setup() {
 // ------------------------------------------------------------------------------------------------------------------------
 void loop(){
   boolean showChange = false;
-  uint8_t secondHand = (millis() / 1000) % 60;
-  uint8_t minuteHand = ((millis() / 1000) / 60) % 60;
-  uint8_t hourHand = ((millis() / 1000) / 60 / 60) % 60;
+  long start = millis();
+  
+  uint16_t millisHand = (start % 1000);
+  uint8_t secondHand = (start / 1000) % 60;
+  uint8_t minuteHand = ((start / 1000) / 60) % 60;
+  uint8_t hourHand = ((start / 1000) / 60 / 60) % 60;
   
 // ------------------------------------------------------------------------------------------------------------------------
   
@@ -82,7 +92,12 @@ void loop(){
 
   if(showChange)
   {
-    Serial.println("[" + String(hourHand) + " hour(s), " + String(minuteHand) + " minute(s), " + String(secondHand) + " second(s)] " + pirStatus);
+    String hh = String(hourHand) + " hour(s), ";
+    String mm = String(minuteHand) + " minute(s), ";
+    String ss = String(secondHand) + " second(s), ";
+    String ms = String(millisHand) + " milli(s)";
+    
+    Serial.println("[" + hh + ", " + mm + ", " + ss + ", " + ms + " " + pirStatus);
     showChange = false;
   }
   
