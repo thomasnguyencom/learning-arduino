@@ -65,10 +65,10 @@ uint8_t max_bright = 255;
 // ------------------------------------------------------------------------------------------------------------------------
 // setup
 // ------------------------------------------------------------------------------------------------------------------------
-void setup() {
+void setup()
+{
   delay( 3000 ); // power-up safety delay
 
-  // Setup WS2812B Strip
   FastLED.addLeds<LED_TYPE, FAST_LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
   FastLED.setBrightness(  BRIGHTNESS );
   
@@ -84,34 +84,32 @@ void setup() {
 // ------------------------------------------------------------------------------------------------------------------------
 // loop
 // ------------------------------------------------------------------------------------------------------------------------
-void loop(){
+void loop()
+{
   boolean isPirChanged = false;
   
-// ------------------------------------------------------------------------------------------------------------------------
-
-  _pirActualStatus = digitalRead(inputPin);  // read input value
+  _pirActualStatus = digitalRead(inputPin);
   digitalWrite(ledPin, _pirActualStatus);
   
-  if (_pirActualStatus == HIGH)
+  if ((_pirActualStatus == HIGH) && (_pirLastStatus == LOW))
   {
-    if (_pirLastStatus == LOW)
-    {
-      isPirChanged = true;
-      _pirLastStatus = _pirActualStatus;
-      
-      fade(_pirActualStatus, stepper, delay_ms);
-    }
+    isPirChanged = true;
+    _pirLastStatus = _pirActualStatus;
+    
+    fade(_pirActualStatus, stepper, delay_ms);
+  }
+  else if ((_pirActualStatus == LOW) && (_pirLastStatus == HIGH))
+  {
+    isPirChanged = true;
+    _pirLastStatus = _pirActualStatus;
+
+    fade(_pirActualStatus, stepper, delay_ms);
   }
   else
   {
-    if (_pirLastStatus == HIGH)
-    {
-      isPirChanged = true;
-      _pirLastStatus = _pirActualStatus;
-
-      fade(_pirActualStatus, stepper, delay_ms);
-    }
+    //nothing has changed, do nothing
   }
+  
 // ------------------------------------------------------------------------------------------------------------------------
   
   FastLED.show();
