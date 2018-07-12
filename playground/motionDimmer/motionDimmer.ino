@@ -34,6 +34,8 @@ int inputPin = 7;               // choose the input pin (for PIR sensor)
 // INIT : LED Pin
 // ------------------------------------------------------------------------------------------------------------------------
 int ledPin = 8;                // choose the pin for the LED
+
+uint8_t ledDelay_ms = 100;
 // ------------------------------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -55,9 +57,14 @@ CRGB leds[NUM_LEDS];
 // Pin assignments
 #define FAST_LED_PIN        9
 
-uint8_t stepper = 2;
-uint8_t delay_ms = 10;
+uint8_t stepper = 1;
+uint8_t fastLedDelay_ms = 10;
 uint8_t max_bright = 255;
+
+CRGB darkest = CRGB(0, 0, 0);
+CRGB brightest = CRGB(max_bright, max_bright, max_bright);
+// ------------------------------------------------------------------------------------------------------------------------
+  
 // ========================================================================================================================
 // MAIN
 // ========================================================================================================================
@@ -77,8 +84,8 @@ void setup()
  
   Serial.begin(9600);
 
-  ledBlink(100);
-  ledBlink(100);
+  ledBlink(ledDelay_ms);
+  ledBlink(ledDelay_ms);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -86,41 +93,24 @@ void setup()
 // ------------------------------------------------------------------------------------------------------------------------
 void loop()
 {
-  boolean isPirChanged = false;
-  
+  // read sensor
   _pirActualStatus = digitalRead(inputPin);
+
+  // update LED
   digitalWrite(ledPin, _pirActualStatus);
-  
-  if ((_pirActualStatus == HIGH) && (_pirLastStatus == LOW))
+
+  // update fastLED
+  if (_pirActualStatus != _pirLastStatus)
   {
-    isPirChanged = true;
     _pirLastStatus = _pirActualStatus;
     
-    fade(_pirActualStatus, stepper, delay_ms);
+    Serial.println("[" + convertToTimeStamp(millis()) + "] " + convertPirStatusToMessage(_pirActualStatus));
+    
+    fade(_pirActualStatus, stepper, fastLedDelay_ms);
   }
-  else if ((_pirActualStatus == LOW) && (_pirLastStatus == HIGH))
-  {
-    isPirChanged = true;
-    _pirLastStatus = _pirActualStatus;
-
-    fade(_pirActualStatus, stepper, delay_ms);
-  }
-  else
-  {
-    //nothing has changed, do nothing
-  }
-  
-// ------------------------------------------------------------------------------------------------------------------------
   
   FastLED.show();
   FastLED.delay(1000 / UPDATES_PER_SECOND);
-
-  if(isPirChanged)
-  {
-    Serial.println("[" + convertToTimeStamp(millis()) + "] " + convertPirStatusToMessage(_pirActualStatus));
-    
-    isPirChanged = false; //reset
-  }
 }
 
 // ========================================================================================================================
@@ -128,84 +118,23 @@ void loop()
 // ========================================================================================================================
 
 // ------------------------------------------------------------------------------------------------------------------------
-// void fade_light_by(uint8_t stepper, uint8_t delay_ms)
-// fadeLightBy (CRGB *leds, uint16_t num_leds, uint8_t fadeBy)
-// ------------------------------------------------------------------------------------------------------------------------
-void fade_light_by(uint8_t stepper, uint8_t delay_ms)
-{
-  fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
-  
-  for(uint16_t counter = 0; counter < max_bright; counter+=stepper)
-  {
-    String output = "fade_light_by: " + String(counter);
-    Serial.println(output);
-    
-    fill_solid(leds, NUM_LEDS, CRGB(counter, counter, counter));
-    FastLED.show();
-  }
-
-  fill_solid(leds, NUM_LEDS, CRGB(max_bright, max_bright, max_bright));
-  FastLED.show();
-}
-
-// ------------------------------------------------------------------------------------------------------------------------
-// void fade_to_black_by(uint8_t stepper, uint8_t delay_ms)
-// fadeToBlackBy (CRGB *leds, uint16_t num_leds, uint8_t fadeBy)
-// ------------------------------------------------------------------------------------------------------------------------
-void fade_to_black_by(uint8_t stepper, uint8_t delay_ms)
-{
-  fill_solid(leds, NUM_LEDS, CRGB(255, 255, 255));
-  
-  for(uint16_t counter = 0; counter < max_bright; counter+=stepper)
-  {
-    String output = "fadeToBlackBy: " + String(counter);
-    Serial.println(output);
-    
-    fadeToBlackBy(leds, NUM_LEDS, stepper);
-    FastLED.show();
-  }
-
-  fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
-  FastLED.show();
-}
-
-// ------------------------------------------------------------------------------------------------------------------------
 // void fade(boolean type, uint8_t stepper, uint8_t delay_ms)
 // ------------------------------------------------------------------------------------------------------------------------
-void fade(boolean type, uint8_t stepper, uint8_t delay_ms)
+void fade(boolean turnOn, uint8_t stepper, uint8_t delay_ms)
 {
-  if(type == HIGH)
-  {
-    fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
-  }
-  else
-  {
-    fill_solid(leds, NUM_LEDS, CRGB(255, 255, 255));
-  }
-  
+  CRGB startingPoint = turnOn ? darkest : brightest;
+  fill_solid(leds, NUM_LEDS, startingPoint);
+ 
   for(uint16_t counter = 0; counter < max_bright; counter+=stepper)
   {    
-    if(type == HIGH)
-    {
-      fill_solid(leds, NUM_LEDS, CRGB(counter, counter, counter));
-    }
-    else
-    {
-      fadeToBlackBy(leds, NUM_LEDS, stepper);
-    }
-    
+    turnOn ? fill_solid(leds, NUM_LEDS, CRGB(counter, counter, counter)) : fadeToBlackBy(leds, NUM_LEDS, stepper);
     FastLED.show();
+    
+    delay(delay_ms);
   }
 
-  if(type == HIGH)
-  {
-    fill_solid(leds, NUM_LEDS, CRGB(max_bright, max_bright, max_bright));
-  }
-  else
-  {
-    fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
-  }
-  
+  CRGB endingPoint = turnOn ? brightest : darkest;
+  fill_solid(leds, NUM_LEDS, endingPoint);
   FastLED.show();
 }
 
@@ -226,14 +155,7 @@ void ledBlink(uint8_t delay_ms)
 // ------------------------------------------------------------------------------------------------------------------------
 String convertPirStatusToMessage(boolean pirStatus)
 {
-  if(pirStatus == HIGH)
-  {
-    return "ON";
-  }
-  else
-  {
-    return "OFF";
-  }
+  return (pirStatus == HIGH) ? "ON" : "OFF";
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -241,10 +163,10 @@ String convertPirStatusToMessage(boolean pirStatus)
 // ------------------------------------------------------------------------------------------------------------------------
 String convertToTimeStamp(long milliseconds)
 {
-  uint16_t millisHand = ( milliseconds % 1000);
-  uint8_t secondHand  = ( milliseconds / 1000) % 60;
-  uint8_t minuteHand  = ((milliseconds / 1000) / 60) % 60;
   uint8_t hourHand    = ((milliseconds / 1000) / 60  / 60) % 60;
+  uint8_t minuteHand  = ((milliseconds / 1000) / 60) % 60;
+  uint8_t secondHand  = ( milliseconds / 1000) % 60;
+  uint16_t millisHand = ( milliseconds % 1000);
   
   String hh = String(hourHand) + " hour(s)";
   String mm = String(minuteHand) + " minute(s)";
