@@ -2,7 +2,10 @@
 Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was on sale at Amazon (November 23, 2016), why not.
 
 # Elegoo UNO Project Super Starter Kit
-* [Elegoo UNO Project Super Starter Kit](https://www.amazon.com/gp/product/B01D8KOZF4/) - **$31.99**
+* [Amazon](https://www.amazon.com/gp/product/B01D8KOZF4/) - **$31.99**
+* [Manufacturer](https://www.elegoo.com/product/elegoo-uno-project-super-starter-kit/)
+
+![Elegoo UNO Project Super Starter Kit Inventory](https://github.com/thomasnguyencom/learning-arduino/blob/learning/docs/super-starter-kit-500x500.jpg)
 
 ## Lessons
  - [ ] Lesson 0 Installing IDE
@@ -33,7 +36,7 @@ Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was o
 
 ## Inventory
  -  [ ]  1 x UNO R3 Controller Board 
- -  [ ]  1 x LCD1602 Module ( with pin header) 
+ -  [ ]  1 x LCD1602 Module (with pin header) 
  -  [ ]  1 x Breadboard Expansion Board 
  -  [ ]  1 x Power Supply Module WARNING: Pls. do not use the voltage higher than 9V 
  -  [ ]  1 x Joystick Module 
@@ -68,31 +71,35 @@ Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was o
  -  [ ]  1 x IC 74HC595 
  -  [ ]  120 x Resistor 
  -  [ ]  10 x Female-to-male Dupont Wire
+ 
 # Elegoo 37-in-1 Sensor Module Kit 
-* [Elegoo 37-in-1 Sensor Module Kit](https://www.amazon.com/gp/product/B009OVGKTQ/) - **$26.99**
+* [Amazon](https://www.amazon.com/gp/product/B009OVGKTQ/) - **$26.99**
+* [Manufacturer](https://www.elegoo.com/product/elegoo-37-in-1-sensor-module-kit/)
+
+![Elegoo 37-in-1 Sensor Module Kit Inventory](https://github.com/thomasnguyencom/learning-arduino/blob/learning/docs/37-in-1-kit-list-500x500.jpg)
 
 ## Inventory
  -  [ ] 1 x Joystick
  -  [ ] 1 x Relay
  -  [ ] 1 x Big sound
  -  [ ] 1 x Small sound
- -  [ ] 1 x Tracking
- -  [ ] 1 x Avoidance
+ -  [ ] 1 x Line Tracking
+ -  [ ] 1 x Obstacle Avoidance
  -  [ ] 1 x Flame
  -  [ ] 1 x Linear hall
- -  [ ] 1 x Mental touch
+ -  [ ] 1 x Metal touch
  -  [ ] 1 x Digital temperature
  -  [ ] 1 x Active buzzer
  -  [ ] 1 x Passive buzzer
  -  [ ] 1 x RGB LED
  -  [ ] 1 x SMD RGB
- -  [ ] 1 x Two-color
+ -  [ ] 1 x Two-color LED
  -  [ ] 1 x Mini two-color
  -  [ ] 1 x Magnetic spring
  -  [ ] 1 x Mini reed switch
  -  [ ] 1 x Heartbeat
  -  [ ] 1 x 7 color flash
- -  [ ] 1 x 7 color flash
+ -  [ ] 1 x Laser Emit
  -  [ ] 1 x Button
  -  [ ] 1 x Shock
  -  [ ] 1 x Rotary encoders
@@ -105,7 +112,7 @@ Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was o
  -  [ ] 1 x Hall magnetic
  -  [ ] 1 x 18B20 temp
  -  [ ] 1 x Analog temp
- -  [ ] 1 x IR mission
+ -  [ ] 1 x IR emission
  -  [ ] 1 x IR receiver
  -  [ ] 1 x Tap module
  -  [ ] 1 x Light blocking
