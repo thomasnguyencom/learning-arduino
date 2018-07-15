@@ -8,69 +8,49 @@ Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was o
 ![Elegoo UNO Project Super Starter Kit Inventory](https://github.com/thomasnguyencom/learning-arduino/blob/learning/docs/super-starter-kit-500x500.jpg)
 
 ## Lessons
- - [-] Lesson 0 Installing IDE
- - [-] Lesson 1 Add Libraries and Open Serial Monitor
- - [-] Lesson 2 Blink
- - [-] Lesson 3 LED
- - [x] Lesson 4 RGB LED
- - [ ] Lesson 5 Digital Inputs
- - [ ] Lesson 6 Making Sounds
- - [ ] Lesson 7 Passive Buzzer
- - [ ] Lesson 8 Ball Switch
- - [ ] Lesson 9 Servo
- - [ ] Lesson 10 Ultrasonic Sensor Module
- - [x] Lesson 11 DHT11 Temperature and Humidity Sensor
- - [ ] Lesson 12 Analog Joystick Module
- - [ ] Lesson 13 IR Receiver Module
- - [x] Lesson 14 LCD Display
- - [ ] Lesson 15 Thermometer
- - [ ] Lesson 16 Eight LED with 74HC595
- - [ ] Lesson 17 The Serial Monitor
- - [ ] Lesson 18 Photocell
- - [ ] Lesson 19 74HC595 And Segment Display
- - [ ] Lesson 20 Four Digital Seven Segment Display
- - [ ] Lesson 21 DC Motors
- - [ ] Lesson 22 Relay
- - [ ] Lesson 23 Stepper Motor
- - [ ] Lesson 24 Controlling Stepper Motor With Remote
+| Lessons | - |
+| --- | --- |
+| 00 Installing IDE| 12 Analog Joystick Module |
+| 01 Add Libraries and Open Serial Monitor | 13 IR Receiver Module |
+| 02 Blink | 14 LCD Display |
+| 03 LED | 15 Thermometer |
+| 04 RGB LED | 16 Eight LED with 74HC595 |
+| 05 Digital Inputs | 17 The Serial Monitor |
+| 06 Making Sounds | 18 Photocell | 
+| 07 Passive Buzzer | 19 74HC595 And Segment Display | 
+| 08 Ball Switch | 20 Four Digital Seven Segment Display |
+| 09 Servo | 21 DC Motors |
+| 10 Ultrasonic Sensor Module | 22 Relay |
+| 11 DHT11 Temperature and Humidity Sensor | 23 Stepper Motor |
 
 ## Inventory
- -  [ ]  1 x UNO R3 Controller Board 
- -  [ ]  1 x LCD1602 Module (with pin header) 
- -  [ ]  1 x Breadboard Expansion Board 
- -  [ ]  1 x Power Supply Module WARNING: Pls. do not use the voltage higher than 9V 
- -  [ ]  1 x Joystick Module 
- -  [ ]  1 x IR Receiver 
- -  [ ]  1 x Servo Motor (SG90) 
- -  [ ]  1 x Stepper Motor 
- -  [ ]  1 x ULN2003 Stepper Motor Driver Board 
- -  [ ]  1 x Ultrasonic Sensor 
- -  [ ]  1 x DHT11 Temperature and Humidity Module 
- -  [ ]  1 x 9V Battery with DC 
- -  [ ]  1 x 65 Jumper Wire 
- -  [ ]  1 x USB Cable 
- -  [ ]  1 x Active Buzzer 
- -  [ ]  1 x Passive Buzzer 
- -  [ ]  1 x Potentiometer 
- -  [ ]  1 x 5V Relay 
- -  [ ]  1 x Breadboard 
- -  [ ]  1 x Remote 
- -  [ ]  1 x Tilt Switch 
- -  [ ]  5 x Button (small) 
- -  [ ]  1 x 1 digit 7-segment Display 
- -  [ ]  1 x 4 digit 7-segment Display 
- -  [ ]  5 x Yellow LED 
- -  [ ]  5 x Blue LED 
- -  [ ]  5 x Green LED 
- -  [ ]  5 x Red LED 
- -  [ ]  1 x RGB LED 
- -  [ ]  2 x Photoresistor 
- -  [ ]  1 x Thermistor 
- -  [ ]  2 x Diode Rectifier (1N4007) 
- -  [ ]  2 x NPN Transistor (PN2222) 
- -  [ ]  1 x IC 74HC595 
- -  [ ]  120 x Resistor 
- -  [ ]  10 x Female-to-male Dupont Wire
+| Inventory | - |
+| --- | --- |
+| 1 x UNO R3 Controller Board | 1 x Breadboard |
+| 1 x LCD1602 Module (with pin header) | 1 x Remote |
+| 1 x Breadboard Expansion Board | 1 x Tilt Switch |
+| 1 x Power Supply Module| 5 x Button (small) |
+| 1 x Joystick Module | 1 x 1 digit 7-segment Display |
+| 1 x IR Receiver | 1 x 4 digit 7-segment Display |
+| 1 x Servo Motor (SG90) | 5 x Yellow LED |
+| 1 x Stepper Motor | 5 x Blue LED |
+| 1 x ULN2003 Stepper Motor Driver Board | 5 x Green LED |
+| 1 x Ultrasonic Sensor | 5 x Red LED |
+| 1 x DHT11 Temperature and Humidity | 1 x RGB LED |
+| 1 x 9V Battery with DC | 2 x Photoresistor |
+| 1 x 65 Jumper Wire | 1 x Thermistor |
+| 1 x USB Cable | 2 x Diode Rectifier (1N4007) |
+| 1 x Active Buzzer | 2 x NPN Transistor (PN2222) |
+| 1 x Passive Buzzer | 1 x IC 74HC595 |
+| 1 x Potentiometer | 120 x Resistor |
+| 1 x 5V Relay | 10 x Female-to-male Dupont Wire |
+
+
+
+
+
+
+
  
 # Elegoo 37-in-1 Sensor Module Kit 
 * [Amazon](https://www.amazon.com/gp/product/B009OVGKTQ/) - **$26.99**
