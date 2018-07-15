@@ -8,21 +8,21 @@ Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was o
 ![Elegoo UNO Project Super Starter Kit Inventory](https://github.com/thomasnguyencom/learning-arduino/blob/learning/docs/super-starter-kit-500x500.jpg)
 
 ## Lessons
- - [ ] Lesson 0 Installing IDE
- - [ ] Lesson 1 Add Libraries and Open Serial Monitor
- - [ ] Lesson 2 Blink
- - [ ] Lesson 3 LED
- - [ ] Lesson 4 RGB LED
+ - [-] Lesson 0 Installing IDE
+ - [-] Lesson 1 Add Libraries and Open Serial Monitor
+ - [-] Lesson 2 Blink
+ - [-] Lesson 3 LED
+ - [x] Lesson 4 RGB LED
  - [ ] Lesson 5 Digital Inputs
  - [ ] Lesson 6 Making Sounds
  - [ ] Lesson 7 Passive Buzzer
  - [ ] Lesson 8 Ball Switch
  - [ ] Lesson 9 Servo
  - [ ] Lesson 10 Ultrasonic Sensor Module
- - [ ] Lesson 11 DHT11 Temperature and Humidity Sensor
+ - [x] Lesson 11 DHT11 Temperature and Humidity Sensor
  - [ ] Lesson 12 Analog Joystick Module
  - [ ] Lesson 13 IR Receiver Module
- - [ ] Lesson 14 LCD Display
+ - [x] Lesson 14 LCD Display
  - [ ] Lesson 15 Thermometer
  - [ ] Lesson 16 Eight LED with 74HC595
  - [ ] Lesson 17 The Serial Monitor
@@ -79,33 +79,33 @@ Playing around with [elegoo](https://www.elegoo.com/) to learn Arduino. It was o
 ![Elegoo 37-in-1 Sensor Module Kit Inventory](https://github.com/thomasnguyencom/learning-arduino/blob/learning/docs/37-in-1-kit-list-500x500.jpg)
 
 ## Lessons
- - [ ] Lesson 0 Installing IDE
- - [ ] Lesson 1 Add Libraries
- - [ ] Lesson 2 Temp and Humidity
+ - [-] Lesson 0 Installing IDE
+ - [-] Lesson 1 Add Libraries
+ - [x] Lesson 2 Temp and Humidity
  - [ ] Lesson 3 DS18B20 Digital Temperature Sensor
  - [ ] Lesson 4 Button Switch
- - [ ] Lesson 5 Four types of vibration switch
+ - [ ] Lesson 5 Four Types of Vibration Switches
  - [ ] Lesson 6 IR Receiver and IR Emission
  - [ ] Lesson 7 Active and Passive Buzzer
- - [ ] Lesson 8 Laser Module
- - [ ] Lesson 9 SMD RGB and RGB Module
- - [ ] Lesson 10 Photo-interrupter module
- - [ ] Lesson 11 dual-Color Common-Cathode LED
- - [ ] Lesson 12 Photoresistor Module
- - [ ] Lesson 13 Big Sound Sensor Module and Small Sound Sensor Module
- - [ ] Lesson 14 Reed Switch and Mini Reed Switch Module
+ - [ ] Lesson 8 Laser
+ - [ ] Lesson 9 SMD RGB and RGB
+ - [ ] Lesson 10 Photo-interrupter
+ - [ ] Lesson 11 Dual-Color Common-Cathode LED
+ - [ ] Lesson 12 Photoresistor
+ - [ ] Lesson 13 Big nd Small Sound Sensor
+ - [ ] Lesson 14 Reed Switch and Mini Reed Switch
  - [ ] Lesson 15 Digital Temperature
  - [ ] Lesson 16 Linear Hall and Analog Hall
  - [ ] Lesson 17 Flame Sensor
  - [ ] Lesson 18 Mental Touch
- - [ ] Lesson 19 7 Color Flash LED
+ - [ ] Lesson 19 Seven Color Flash LED
  - [ ] Lesson 20 Magic Light Cup
  - [ ] Lesson 21 Joystick
- - [ ] Lesson 22 Tracking module
- - [ ] Lesson 23 Infrared 38khz obstacle avoidance module
- - [ ] Lesson 24 Rotary Encoders module
- - [ ] Lesson 25 1 Channel Relay module
- - [ ] Lesson 26 Heartbeat module
+ - [ ] Lesson 22 Tracking
+ - [ ] Lesson 23 Infrared 38khz Obstacle Avoidance
+ - [ ] Lesson 24 Rotary Encoders
+ - [ ] Lesson 25 One Channel Relay
+ - [ ] Lesson 26 Heartbeat
 
 ## Inventory
  -  [ ] 1 x Joystick
