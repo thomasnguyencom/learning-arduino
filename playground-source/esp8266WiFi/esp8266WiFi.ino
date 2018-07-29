@@ -21,20 +21,21 @@
 //  | [TX    ] [GND   ] /----------\  |
 //  | [CH_PD ] [GPIO 2] |   /------/  |
 //  | [RST   ] [GPIO 0] |   \------\  |
-//  | [VCC   ] [TX    ]            |  |
+//  | [VCC   ] [RX    ]            |  |
 //  \--------------------------------/
 
 // ------------------------------------------------------------------------------------------------------------------------
 // Wire/Ribbon configuration
 // ------------------------------------------------------------------------------------------------------------------------
-// -[TX    ] {Green } (D1) Transmitter mode
-// -[CH_PD ] {Blue  } (3.3V) Chip power down
-// -[RST   ] {Purple} (3.3V) Reset
-// -[VCC   ] {Gray  } (3.3V) Voltage of Closed Circuit
-// -[GND   ] {Brown } (GND) Ground
-// -[GPIO 2] {Red   } General Port Input Output 2
-// -[GPIO 0] {Orange} (GND) General Port Input Output 0
-// -[RX    ] {Yellow} (D0) Receive mode
+// -{Green } [TX    ] (D1) Transmitter mode
+// -{Blue  } [CH_PD ] (3.3V) Chip power down
+// -{Purple} [RST   ] (3.3V) Reset
+// -{Gray  } [VCC   ] (3.3V) Voltage of Closed Circuit
+// ------------------------------------------------------------------------------------------------------------------------
+// -{Brown } [GND   ] (GND) Ground
+// -{Red   } [GPIO 2] (-) General Port Input Output 2
+// -{Orange} [GPIO 0] (GND) General Port Input Output 0
+// -{Yellow} [RX    ] (D0) Receive mode
 
 // ------------------------------------------------------------------------------------------------------------------------
 // Serial Monitor configuration
