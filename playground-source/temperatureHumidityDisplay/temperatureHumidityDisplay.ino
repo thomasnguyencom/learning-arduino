@@ -14,7 +14,7 @@ Body size 15.5mm x 12mm x 5.5mm
 */
 
 // for DHT11,
-//      VCC: 5V or 3V
+//      VCC: 5V
 //      GND: GND
 //      DATA: 2
 int pinDHT11 = 2;
@@ -49,10 +49,10 @@ void loop() {
   float fahrenheit = (celcius * 9 / 5) + 32;
   float kelvin = ((float) celcius) + 273.15;
 
-  Serial.print(celcius); Serial.print("\t\t");
-  Serial.print(fahrenheit); Serial.print("\t\t");
-  Serial.print(kelvin); Serial.print("\t\t");
-  Serial.print(humidity); Serial.print("\t\t");
+  Serial.print(celcius); Serial.print(" C"); Serial.print("\t\t");
+  Serial.print(fahrenheit); Serial.print(" F"); Serial.print("\t\t");
+  Serial.print(kelvin); Serial.print(" K"); Serial.print("\t\t");
+  Serial.print(humidity); Serial.print(" %"); Serial.print("\t\t");
   
   //raw data output
   for (int i = 0; i < 40; i++) {
