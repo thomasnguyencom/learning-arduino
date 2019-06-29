@@ -12,14 +12,35 @@ const String LED_STATE_KEY = "#LED_STATE_KEY#";
 //instantiate server at port 80 (http port)
 ESP8266WebServer server(80);
 
-// LED pin definitions
-int ledPin = 13;
+// Pin definitions
+int pin_D1 =  5;
+int pin_D2 =  4;
+int pin_D3 =  0;
+int pin_D4 =  2;
+int pin_D5 = 14;
+int pin_D6 = 12;
+int pin_D7 = 13;
+int pin_D8 = 15;
 
 void setup(void){
   //make the LED pin output and initially turned off
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, LOW);
-   
+  pinMode(pin_D1, OUTPUT);
+  pinMode(pin_D2, OUTPUT);
+  pinMode(pin_D3, OUTPUT);
+  pinMode(pin_D4, OUTPUT);
+  pinMode(pin_D5, OUTPUT);
+  pinMode(pin_D6, OUTPUT);
+  pinMode(pin_D7, OUTPUT);
+  pinMode(pin_D8, OUTPUT);
+  digitalWrite(pin_D1, LOW);
+  digitalWrite(pin_D2, LOW);
+  digitalWrite(pin_D3, LOW);
+  digitalWrite(pin_D4, LOW);
+  digitalWrite(pin_D5, LOW);
+  digitalWrite(pin_D6, LOW);
+  digitalWrite(pin_D7, LOW);
+  digitalWrite(pin_D8, LOW);
+  
   delay(1000);
   Serial.begin(115200);
   WiFi.begin(ssid, password); //begin WiFi connection
@@ -39,14 +60,18 @@ void setup(void){
   server.on("/", [](){
     server.send(200, "text/html", GetHtmlPage(""));
   });
-  server.on("/LEDOn", [](){
-    server.send(200, "text/html", GetHtmlPage("ON"));
-    digitalWrite(ledPin, HIGH);
-    delay(1000);
-  });
+  
+  server.on("/D1", [](){ server.send(200, "text/html", GetHtmlPage("D1")); delay(1000); });
+  server.on("/D2", [](){ server.send(200, "text/html", GetHtmlPage("D2")); delay(1000); });
+  server.on("/D3", [](){ server.send(200, "text/html", GetHtmlPage("D3")); delay(1000); });
+  server.on("/D4", [](){ server.send(200, "text/html", GetHtmlPage("D4")); delay(1000); });
+  server.on("/D5", [](){ server.send(200, "text/html", GetHtmlPage("D5")); delay(1000); });
+  server.on("/D6", [](){ server.send(200, "text/html", GetHtmlPage("D6")); delay(1000); });
+  server.on("/D7", [](){ server.send(200, "text/html", GetHtmlPage("D7")); delay(1000); });
+  server.on("/D8", [](){ server.send(200, "text/html", GetHtmlPage("D8")); delay(1000); });
+  
   server.on("/LEDOff", [](){
     server.send(200, "text/html", GetHtmlPage("OFF"));
-    digitalWrite(ledPin, LOW);
     delay(1000); 
   });
   server.begin();
@@ -58,10 +83,43 @@ void loop(void){
 }
 
 String GetHtmlPage(String ledState){
-  String pageTemplate = "<html><body><h1>Simple NodeMCU Web Server</h1><p><a href=\"LEDOn\"><button>ON</button></a>&nbsp;<a href=\"LEDOff\"><button>OFF</button></a></p><p>#LED_STATE_KEY#</p></body></html>";
+  String d1 = "<a href=\"D1\"><button>ON</button></a>";
+  String d2 = "<a href=\"D2\"><button>ON</button></a>";
+  String d3 = "<a href=\"D3\"><button>ON</button></a>";
+  String d4 = "<a href=\"D4\"><button>ON</button></a>";
+  String d5 = "<a href=\"D5\"><button>ON</button></a>";
+  String d6 = "<a href=\"D6\"><button>ON</button></a>";
+  String d7 = "<a href=\"D7\"><button>ON</button></a>";
+  String d8 = "<a href=\"D8\"><button>ON</button></a>";
+
+  String d = d1 + d2 + d3 + d4 + d5 + d6 + d7 + d8;
+
+  String off = "<a href=\"LEDOff\"><button>OFF</button></a>";
+  
+  String s = "<p>" + d + "&nbsp;" + off + "</p>";
+  
+  String pageTemplate = "<html><body><h1>Simple NodeMCU Web Server</h1>" + s + "<p>#LED_STATE_KEY#</p></body></html>";
 
   pageTemplate.replace(LED_STATE_KEY, ledState);
   String page = pageTemplate;
+  
+  digitalWrite(pin_D1, LOW);
+  digitalWrite(pin_D2, LOW);
+  digitalWrite(pin_D3, LOW);
+  digitalWrite(pin_D4, LOW);
+  digitalWrite(pin_D5, LOW);
+  digitalWrite(pin_D6, LOW);
+  digitalWrite(pin_D7, LOW);
+  digitalWrite(pin_D8, LOW);
+
+  if (ledState == "D1") { digitalWrite(pin_D1, HIGH); }
+  else if (ledState == "D2") { digitalWrite(pin_D2, HIGH); }
+  else if (ledState == "D3") { digitalWrite(pin_D3, HIGH); }
+  else if (ledState == "D4") { digitalWrite(pin_D4, HIGH); }
+  else if (ledState == "D5") { digitalWrite(pin_D5, HIGH); }
+  else if (ledState == "D6") { digitalWrite(pin_D6, HIGH); }
+  else if (ledState == "D7") { digitalWrite(pin_D7, HIGH); }
+  else if (ledState == "D8") { digitalWrite(pin_D8, HIGH); }
   
   return page;
 
