@@ -2,7 +2,7 @@
 // https://randomnerdtutorials.com/guide-for-ws2812b-addressable-rgb-led-strip-with-arduino/
 // http://fastled.io/
 // ------------------------------------------------------------------------------------------------------------------------
-https://github.com/FastLED/FastLED/wiki/ESP8266-notes
+//https://github.com/FastLED/FastLED/wiki/ESP8266-notes
 #define FASTLED_ESP8266_RAW_PIN_ORDER
 #define FASTLED_ESP8266_NODEMCU_PIN_ORDER
 #define FASTLED_ESP8266_D1_PIN_ORDER
@@ -145,6 +145,15 @@ void setup(void){
  
 void loop(void){
   server.handleClient();
+
+  String paletteOutput = PalettePicker();
+  
+  static uint8_t startIndex = 0;
+  startIndex = startIndex + 1;    
+  FillLEDsFromPaletteColors( startIndex);
+  
+  FastLED.show();
+  FastLED.delay(1000 / UPDATES_PER_SECOND);
 }
 
 void GetHtmlPage(String ledState){
@@ -188,14 +197,6 @@ void GetHtmlPage(String ledState){
   //else if (ledState == "D8") { digitalWrite(pin_D8, HIGH); }
   else if (ledState == "D8")
   {
-    String paletteOutput = PalettePicker();
-    
-    static uint8_t startIndex = 0;
-    startIndex = startIndex + 1;    
-    FillLEDsFromPaletteColors( startIndex);
-    
-    FastLED.show();
-    FastLED.delay(1000 / UPDATES_PER_SECOND);
   }
 
   server.send(200, "text/html", page);
