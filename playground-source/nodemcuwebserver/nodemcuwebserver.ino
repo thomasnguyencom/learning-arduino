@@ -21,16 +21,6 @@ const String LED_STATE_KEY = "#LED_STATE_KEY#";
 //instantiate server at port 80 (http port)
 ESP8266WebServer server(80);
 
-// Pin definitions
-int pin_D1 =  5;
-int pin_D2 =  4;
-int pin_D3 =  0;
-int pin_D4 =  2;
-int pin_D5 = 14;
-int pin_D6 = 12;
-int pin_D7 = 13;
-//int pin_D8 = 15;
-
 // ========================================================================================================================
 // GLOBAL
 // ========================================================================================================================
@@ -40,12 +30,15 @@ CRGBPalette16 currentPalette;
 String        currentPaletteName;
 int           currentPalettePointer = 0;
 
-String PALETTE_GLOW      = "Glow";
-String PALETTE_CANDYCANE = "Candy Cane";
-String PALETTE_COLORFUL  = "Colorful";
-String PALETTE_HOLIDAY   = "Holiday";
-String PALETTE_CHASE     = "Chase";
-String PALETTE_SPARKLES  = "Sparkles";
+String PALETTE_GLOW      = "glow";
+String PALETTE_CANDYCANE = "candycane";
+String PALETTE_COLORFUL  = "colorful";
+String PALETTE_HOLIDAY   = "holiday";
+String PALETTE_CHASE     = "chase";
+String PALETTE_SPARKLES  = "sparkles";
+String PALETTE_MURCA = "murca";
+
+String _paletteName;
 
 // ========================================================================================================================
 // INITIALIZE HARDWARE
@@ -61,14 +54,14 @@ String PALETTE_SPARKLES  = "Sparkles";
 // -[5V]  Connects to a +5V power supply
 // ------------------------------------------------------------------------------------------------------------------------
 #define UPDATES_PER_SECOND 100
-#define NUM_LEDS           50
+#define NUM_LEDS           100
 CRGB leds[NUM_LEDS];
 #define BRIGHTNESS         64
 #define LED_TYPE           WS2811
-#define COLOR_ORDER        RGB
+#define COLOR_ORDER        RGB // okay
 
 // Pin assignments
-#define FAST_LED_PIN        15
+#define FAST_LED_PIN       15
 
 // ========================================================================================================================
 // MAIN
@@ -78,29 +71,11 @@ CRGB leds[NUM_LEDS];
 // setup
 // ------------------------------------------------------------------------------------------------------------------------
 void setup(void){
-  delay( 3000 ); // power-up safety delay
+  // power-up safety delay
+  delay(3000);
 
-  //make the LED pin output and initially turned off
-  pinMode(pin_D1, OUTPUT);
-  pinMode(pin_D2, OUTPUT);
-  pinMode(pin_D3, OUTPUT);
-  pinMode(pin_D4, OUTPUT);
-  pinMode(pin_D5, OUTPUT);
-  pinMode(pin_D6, OUTPUT);
-  pinMode(pin_D7, OUTPUT);
-  //pinMode(pin_D8, OUTPUT);
-  digitalWrite(pin_D1, LOW);
-  digitalWrite(pin_D2, LOW);
-  digitalWrite(pin_D3, LOW);
-  digitalWrite(pin_D4, LOW);
-  digitalWrite(pin_D5, LOW);
-  digitalWrite(pin_D6, LOW);
-  digitalWrite(pin_D7, LOW);
-  //digitalWrite(pin_D8, LOW);
-  
-  delay(1000);
   Serial.begin(115200);
-  WiFi.begin(ssid, password); //begin WiFi connection
+  WiFi.begin(ssid, password);
   Serial.println("");
 
   // Wait for connection
@@ -108,6 +83,7 @@ void setup(void){
     delay(500);
     Serial.print(".");
   }
+
   Serial.println("");
   Serial.print("Connected to ");
   Serial.println(ssid);
@@ -115,26 +91,13 @@ void setup(void){
   Serial.println(WiFi.localIP());
    
   server.on("/", [](){
-    //server.send(200, "text/html", GetHtmlPage(""));
     GetHtmlPage("");
   });
-  
-  server.on("/D1", [](){ GetHtmlPage("D1"); } );
-  server.on("/D2", [](){ GetHtmlPage("D2"); } );
-  server.on("/D3", [](){ GetHtmlPage("D3"); } );
-  server.on("/D4", [](){ GetHtmlPage("D4"); } );
-  server.on("/D5", [](){ GetHtmlPage("D5"); } );
-  server.on("/D6", [](){ GetHtmlPage("D6"); } );
-  server.on("/D7", [](){ GetHtmlPage("D7"); } );
-  server.on("/D8", [](){ GetHtmlPage("D8"); } );
-  
+
   delay(1000);
   
-  server.on("/LEDOff", [](){
-    //server.send(200, "text/html", GetHtmlPage("OFF"));
-    GetHtmlPage("OFF");
-    delay(1000); 
-  });
+  ConfigureRoutes();
+  
   server.begin();
   Serial.println("Web server started!");
 
@@ -146,7 +109,7 @@ void setup(void){
 void loop(void){
   server.handleClient();
 
-  String paletteOutput = PalettePicker();
+  GetPalette(_paletteName);
   
   static uint8_t startIndex = 0;
   startIndex = startIndex + 1;    
@@ -156,50 +119,44 @@ void loop(void){
   FastLED.delay(1000 / UPDATES_PER_SECOND);
 }
 
-void GetHtmlPage(String ledState){
-  String d1 = "<a href=\"D1\"><button>D1</button></a>";
-  String d2 = "<a href=\"D2\"><button>D2</button></a>";
-  String d3 = "<a href=\"D3\"><button>D3</button></a>";
-  String d4 = "<a href=\"D4\"><button>D4</button></a>";
-  String d5 = "<a href=\"D5\"><button>D5</button></a>";
-  String d6 = "<a href=\"D6\"><button>D6</button></a>";
-  String d7 = "<a href=\"D7\"><button>D7</button></a>";
-  String d8 = "<a href=\"D8\"><button>D8</button></a>";
+void GetHtmlPage(String paletteName){
+  _paletteName = paletteName;
+
+  ConfigureRoutes();
+  
+  String d1 = "<p><a href=\"" + PALETTE_CANDYCANE + "\"><button>" + PALETTE_CANDYCANE + "</button></a></p>";
+  String d2 = "<p><a href=\"" + PALETTE_GLOW + "\"><button>" + PALETTE_GLOW + "</button></a></p>";
+  String d3 = "<p><a href=\"" + PALETTE_COLORFUL + "\"><button>" + PALETTE_COLORFUL + "</button></a></p>";
+  String d4 = "<p><a href=\"" + PALETTE_SPARKLES + "\"><button>" + PALETTE_SPARKLES + "</button></a></p>";
+  String d5 = "<p><a href=\"" + PALETTE_HOLIDAY + "\"><button>" + PALETTE_HOLIDAY + "</button></a></p>";
+  String d6 = "<p><a href=\"" + PALETTE_CHASE + "\"><button>" + PALETTE_CHASE + "</button></a></p>";  
+  String d7 = "<p><a href=\"" + PALETTE_MURCA + "\"><button>" + PALETTE_MURCA + "</button></a></p>";
+  String d8 = "<p><a href=\"" + PALETTE_CANDYCANE + "\"><button>" + PALETTE_CANDYCANE + "</button></a></p>";
 
   String d_1 = d1 + d2 + d3 + d4;
   String d_2 = d5 + d6 + d7 + d8;
 
-  String off = "<a href=\"LEDOff\"><button>OFF</button></a>";
+  String off = "<a href=\"Off\"><button>OFF</button></a>";
   
-  String s = "<p>" + d_1 + "</p><p>" + d_2 + "</p><p>" + off + "</p>";
+  String s = d_1 + d_2;
   
-  String pageTemplate = "<html><body><h1>Simple NodeMCU Web Server</h1>" + s + "<p>#LED_STATE_KEY#</p></body></html>";
+  String pageTemplate = "<html><body><h1>Tom's Magic Lantern</h1>" + s + "<p>#LED_STATE_KEY#</p></body></html>";
 
-  pageTemplate.replace(LED_STATE_KEY, ledState);
+  pageTemplate.replace(LED_STATE_KEY, paletteName);
   String page = pageTemplate;
   
-  digitalWrite(pin_D1, LOW);
-  digitalWrite(pin_D2, LOW);
-  digitalWrite(pin_D3, LOW);
-  digitalWrite(pin_D4, LOW);
-  digitalWrite(pin_D5, LOW);
-  digitalWrite(pin_D6, LOW);
-  digitalWrite(pin_D7, LOW);
-  //digitalWrite(pin_D8, LOW);
-
-       if (ledState == "D1") { digitalWrite(pin_D1, HIGH); }
-  else if (ledState == "D2") { digitalWrite(pin_D2, HIGH); }
-  else if (ledState == "D3") { digitalWrite(pin_D3, HIGH); }
-  else if (ledState == "D4") { digitalWrite(pin_D4, HIGH); }
-  else if (ledState == "D5") { digitalWrite(pin_D5, HIGH); }
-  else if (ledState == "D6") { digitalWrite(pin_D6, HIGH); }
-  else if (ledState == "D7") { digitalWrite(pin_D7, HIGH); }
-  //else if (ledState == "D8") { digitalWrite(pin_D8, HIGH); }
-  else if (ledState == "D8")
-  {
-  }
-
   server.send(200, "text/html", page);
+}
+
+void ConfigureRoutes() {
+  server.on(("/" + PALETTE_CANDYCANE), [](){ GetHtmlPage(PALETTE_CANDYCANE); } );
+  server.on(("/" + PALETTE_GLOW)     , [](){ GetHtmlPage(PALETTE_GLOW); } );
+  server.on(("/" + PALETTE_COLORFUL) , [](){ GetHtmlPage(PALETTE_COLORFUL); } );
+  server.on(("/" + PALETTE_SPARKLES) , [](){ GetHtmlPage(PALETTE_SPARKLES); } );
+  server.on(("/" + PALETTE_HOLIDAY)  , [](){ GetHtmlPage(PALETTE_HOLIDAY); } );
+  server.on(("/" + PALETTE_CHASE)    , [](){ GetHtmlPage(PALETTE_CHASE); } );  
+  server.on(("/" + PALETTE_MURCA)    , [](){ GetHtmlPage(PALETTE_MURCA); } );
+  server.on(("/" + PALETTE_CANDYCANE), [](){ GetHtmlPage(PALETTE_CANDYCANE); } );
 }
 
 // ========================================================================================================================
@@ -313,6 +270,10 @@ void GetPalette(String paletteName)
   {
     SetupGlowPalette();
   }
+  else if( paletteName == PALETTE_MURCA)
+  {
+    SetupColorfulMurca();
+  }
   else
   {
     paletteName = "UNKNOWN";
@@ -342,14 +303,14 @@ void SetupHolidayPalette()
 // ------------------------------------------------------------------------------------------------------------------------
 void SetupCandyCanePalette()
 {
-  CRGB c_red___ = CRGB( 255,   0,   0);
+  CRGB c_red___ = CRGB(   0, 255,   0);
   CRGB c_white_ = CRGB( 255, 255, 255);
-  
+  CRGB c_black_ = CRGB(   0,   0,   0);
   currentPalette = CRGBPalette16(
-    c_red___, c_red___, c_red___, c_red___,
-    c_white_, c_white_, c_white_, c_white_,
-    c_red___, c_red___, c_red___, c_red___,
-    c_white_, c_white_, c_white_, c_white_
+    c_red___, c_white_, c_red___, c_white_,
+    c_black_, c_black_, c_black_, c_black_,
+    c_black_, c_black_, c_black_, c_black_,
+    c_black_, c_black_, c_black_, c_black_
   );
 }
 
@@ -437,6 +398,25 @@ void SetupGlowPalette()
     c_1, c_0, c_1, c_0,
     c_1, c_0, c_1, c_0,
     c_1, c_0, c_1, c_0
+  );
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// MURCA
+// ------------------------------------------------------------------------------------------------------------------------
+void SetupColorfulMurca()
+{
+  //                      G    R    B
+  CRGB c_red___ = CRGB(   0, 255,   0); 
+  CRGB c_white_ = CRGB( 254, 254, 254); //CRGB( 255, 255, 255);
+  CRGB c_blue__ = CRGB(   0,   0, 255);
+  CRGB c_black_ = CRGB(   0,   0,   0);
+  
+  currentPalette = CRGBPalette16(
+    c_red___, c_white_, c_blue__, c_black_,
+    c_black_, c_black_, c_black_, c_black_,
+    c_red___, c_white_, c_blue__, c_black_,
+    c_black_, c_black_, c_black_, c_black_
   );
 }
 
