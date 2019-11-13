@@ -22,6 +22,7 @@ const String LED_STATE_KEY = "#LED_STATE_KEY#";
 
 int _digitalPin = 0;
 
+int D_0 = 0;
 int D_1 = 1;
 int D_2 = 2;
 int D_3 = 3;
@@ -30,6 +31,15 @@ int D_5 = 5;
 int D_6 = 6;
 int D_7 = 7;
 int D_8 = 8;
+
+int pinMode_1 = 5;
+int pinMode_2 = 4;
+int pinMode_3 = 0;
+int pinMode_4 = 2;
+int pinMode_5 = 14;
+int pinMode_6 = 12;
+int pinMode_7 = 13;
+int pinMode_8 = 15;
 
 // ========================================================================================================================
 // INITIALIZE HARDWARE
@@ -72,15 +82,15 @@ void setup(void){
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   
-  pinMode( 5, OUTPUT);
-  pinMode( 4, OUTPUT);
-  pinMode( 0, OUTPUT);
-  pinMode( 2, OUTPUT);
+  pinMode(pinMode_1, OUTPUT);
+  pinMode(pinMode_2, OUTPUT);
+  pinMode(pinMode_3, OUTPUT);
+  pinMode(pinMode_4, OUTPUT);
   
-  pinMode(14, OUTPUT);
-  pinMode(12, OUTPUT);
-  pinMode(13, OUTPUT);
-  pinMode(15, OUTPUT);
+  pinMode(pinMode_5, OUTPUT);
+  pinMode(pinMode_6, OUTPUT);
+  pinMode(pinMode_7, OUTPUT);
+  pinMode(pinMode_8, OUTPUT);
   
   server.on("/", [](){
     GetHtmlPage(0);
@@ -109,10 +119,13 @@ void GetHtmlPage(int digitalPin){
 
   ConfigureRoutes();
   
+  String d0 = "<p><a href=\"" + String(D_0) + "\"><button>" + String(D_0) + "</button></a></p>";
+  
   String d1 = "<p><a href=\"" + String(D_1) + "\"><button>" + String(D_1) + "</button></a></p>";
   String d2 = "<p><a href=\"" + String(D_2) + "\"><button>" + String(D_2) + "</button></a></p>";
   String d3 = "<p><a href=\"" + String(D_3) + "\"><button>" + String(D_3) + "</button></a></p>";
   String d4 = "<p><a href=\"" + String(D_4) + "\"><button>" + String(D_4) + "</button></a></p>";
+  
   String d5 = "<p><a href=\"" + String(D_5) + "\"><button>" + String(D_5) + "</button></a></p>";
   String d6 = "<p><a href=\"" + String(D_6) + "\"><button>" + String(D_6) + "</button></a></p>";
   String d7 = "<p><a href=\"" + String(D_7) + "\"><button>" + String(D_7) + "</button></a></p>";
@@ -123,7 +136,7 @@ void GetHtmlPage(int digitalPin){
 
   String off = "<a href=\"Off\"><button>OFF</button></a>";
   
-  String s = d_1 + d_2;
+  String s = d0 + d_1 + d_2;
   
   String pageTemplate = "<html><body><h1>Tom's Magic Lantern</h1>" + s + "<p>#LED_STATE_KEY#</p></body></html>";
 
@@ -134,6 +147,7 @@ void GetHtmlPage(int digitalPin){
 }
 
 void ConfigureRoutes() {
+  server.on(("/" + String(D_0)), [](){ GetHtmlPage(D_0); } );
   server.on(("/" + String(D_1)), [](){ GetHtmlPage(D_1); } );
   server.on(("/" + String(D_2)), [](){ GetHtmlPage(D_2); } );
   server.on(("/" + String(D_3)), [](){ GetHtmlPage(D_3); } );
@@ -157,26 +171,25 @@ void SetDigitalPin(int digitalPin) {
   if(digitalPin == D_8) { digitalWrite(15, HIGH); } else { digitalWrite(15, HIGH); }
 */
 
-  digitalWrite( 5, LOW);
-  digitalWrite( 4, LOW);
-  digitalWrite( 0, LOW);
-  digitalWrite( 2, LOW);
+  digitalWrite(pinMode_1, LOW);
+  digitalWrite(pinMode_2, LOW);
+  digitalWrite(pinMode_3, LOW);
+  digitalWrite(pinMode_4, LOW);
 
+  digitalWrite(pinMode_5, LOW);
+  digitalWrite(pinMode_6, LOW);
+  digitalWrite(pinMode_7, LOW);
+  digitalWrite(pinMode_8, LOW);
 
-  digitalWrite(14, LOW);
-  digitalWrite(12, LOW);
-  digitalWrite(13, LOW);
-  digitalWrite(15, LOW);
-
-  if(digitalPin == D_1) { digitalWrite( 5, HIGH); Serial.println("Digital 1"); }
-  if(digitalPin == D_2) { digitalWrite( 4, HIGH); Serial.println("Digital 2"); }
-  if(digitalPin == D_3) { digitalWrite( 0, HIGH); Serial.println("Digital 3"); }
-  if(digitalPin == D_4) { digitalWrite( 2, HIGH); Serial.println("Digital 4"); }
+  if(digitalPin == D_1) { digitalWrite(pinMode_1, HIGH); Serial.println("Digital 1"); }
+  if(digitalPin == D_2) { digitalWrite(pinMode_2, HIGH); Serial.println("Digital 2"); }
+  if(digitalPin == D_3) { digitalWrite(pinMode_3, HIGH); Serial.println("Digital 3"); }
+  if(digitalPin == D_4) { digitalWrite(pinMode_4, HIGH); Serial.println("Digital 4"); }
   
-  if(digitalPin == D_5) { digitalWrite(14, HIGH); Serial.println("Digital 5"); }
-  if(digitalPin == D_6) { digitalWrite(12, HIGH); Serial.println("Digital 6"); }
-  if(digitalPin == D_7) { digitalWrite(13, HIGH); Serial.println("Digital 7"); }
-  if(digitalPin == D_8) { digitalWrite(15, HIGH); Serial.println("Digital 8"); }
+  if(digitalPin == D_5) { digitalWrite(pinMode_5, HIGH); Serial.println("Digital 5"); }
+  if(digitalPin == D_6) { digitalWrite(pinMode_6, HIGH); Serial.println("Digital 6"); }
+  if(digitalPin == D_7) { digitalWrite(pinMode_7, HIGH); Serial.println("Digital 7"); }
+  if(digitalPin == D_8) { digitalWrite(pinMode_8, HIGH); Serial.println("Digital 8"); }
 }
 
 //EOL
