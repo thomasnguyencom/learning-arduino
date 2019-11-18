@@ -1,7 +1,17 @@
 // https://www.teachmemicro.com/simple-nodemcu-web-server/
-// Use basic functionality of NodeMCU - no web server
-//   -GPIO12 is D6 on the board
-//   -GPIO13 is D7 on the board
+// SETUP/INSTALLATION:
+// Add boards to IDE: http://arduino.esp8266.com/stable/package_esp8266com_index.json
+// Install Boards Manager - ESP8266
+// Reference NodeMCU 1.0 ESP-12E
+
+// D1 = GPIO_5;
+// D2 = GPIO_4;
+// D3 = GPIO_0;
+// D4 = GPIO_2;
+// D5 = GPIO_14;
+// D6 = GPIO_12;
+// D7 = GPIO_13;
+// D8 = GPIO_15;
 
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -119,17 +129,17 @@ void GetHtmlPage(int digitalPin){
 
   ConfigureRoutes();
   
-  String d0 = "<p><a href=\"" + String(D_0) + "\"><button>" + String(D_0) + "</button></a></p>";
+  String d0 = "<p><a href=\"" + String(D_0) + "\"><button class=\"large\">" + String(D_0) + "</button></a></p>";
   
-  String d1 = "<p><a href=\"" + String(D_1) + "\"><button>" + String(D_1) + "</button></a></p>";
-  String d2 = "<p><a href=\"" + String(D_2) + "\"><button>" + String(D_2) + "</button></a></p>";
-  String d3 = "<p><a href=\"" + String(D_3) + "\"><button>" + String(D_3) + "</button></a></p>";
-  String d4 = "<p><a href=\"" + String(D_4) + "\"><button>" + String(D_4) + "</button></a></p>";
+  String d1 = "<p><a href=\"" + String(D_1) + "\"><button class=\"large\">" + String(D_1) + "</button></a></p>";
+  String d2 = "<p><a href=\"" + String(D_2) + "\"><button class=\"large\">" + String(D_2) + "</button></a></p>";
+  String d3 = "<p><a href=\"" + String(D_3) + "\"><button class=\"large\">" + String(D_3) + "</button></a></p>";
+  String d4 = "<p><a href=\"" + String(D_4) + "\"><button class=\"large\">" + String(D_4) + "</button></a></p>";
   
-  String d5 = "<p><a href=\"" + String(D_5) + "\"><button>" + String(D_5) + "</button></a></p>";
-  String d6 = "<p><a href=\"" + String(D_6) + "\"><button>" + String(D_6) + "</button></a></p>";
-  String d7 = "<p><a href=\"" + String(D_7) + "\"><button>" + String(D_7) + "</button></a></p>";
-  String d8 = "<p><a href=\"" + String(D_8) + "\"><button>" + String(D_8) + "</button></a></p>";
+  String d5 = "<p><a href=\"" + String(D_5) + "\"><button class=\"large\">" + String(D_5) + "</button></a></p>";
+  String d6 = "<p><a href=\"" + String(D_6) + "\"><button class=\"large\">" + String(D_6) + "</button></a></p>";
+  String d7 = "<p><a href=\"" + String(D_7) + "\"><button class=\"large\">" + String(D_7) + "</button></a></p>";
+  String d8 = "<p><a href=\"" + String(D_8) + "\"><button class=\"large\">" + String(D_8) + "</button></a></p>";
 
   String d_1 = d1 + d2 + d3 + d4;
   String d_2 = d5 + d6 + d7 + d8;
@@ -137,8 +147,10 @@ void GetHtmlPage(int digitalPin){
   String off = "<a href=\"Off\"><button>OFF</button></a>";
   
   String s = d0 + d_1 + d_2;
+
+  String headerTags = "<header><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css\"></header>";
   
-  String pageTemplate = "<html><body><h1>Tom's Magic Lantern</h1>" + s + "<p>#LED_STATE_KEY#</p></body></html>";
+  String pageTemplate = "<html>" + headerTags + "<body><h1>Tom's Magic Lantern</h1>" + s + "<p>#LED_STATE_KEY#</p></body></html>";
 
   pageTemplate.replace(LED_STATE_KEY, String(digitalPin));
   String page = pageTemplate;
