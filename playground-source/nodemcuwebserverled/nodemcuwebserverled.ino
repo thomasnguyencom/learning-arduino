@@ -129,17 +129,17 @@ void GetHtmlPage(int digitalPin){
 
   ConfigureRoutes();
 
-  String d0 = GetButtonTag(D_0);
+  String d0 = GetButtonTag(D_0, digitalPin);
 
-  String d1 = GetButtonTag(D_1);
-  String d2 = GetButtonTag(D_2);
-  String d3 = GetButtonTag(D_3);
-  String d4 = GetButtonTag(D_4);
+  String d1 = GetButtonTag(D_1, digitalPin);
+  String d2 = GetButtonTag(D_2, digitalPin);
+  String d3 = GetButtonTag(D_3, digitalPin);
+  String d4 = GetButtonTag(D_4, digitalPin);
 
-  String d5 = GetButtonTag(D_5);
-  String d6 = GetButtonTag(D_6);
-  String d7 = GetButtonTag(D_7);
-  String d8 = GetButtonTag(D_8);
+  String d5 = GetButtonTag(D_5, digitalPin);
+  String d6 = GetButtonTag(D_6, digitalPin);
+  String d7 = GetButtonTag(D_7, digitalPin);
+  String d8 = GetButtonTag(D_8, digitalPin);
 
   String d_1 = d1 + d2 + d3 + d4;
   String d_2 = d5 + d6 + d7 + d8;
@@ -192,22 +192,15 @@ void SetDigitalPin(int digitalPin) {
   if(digitalPin == D_8) { digitalWrite(pinMode_8, HIGH); Serial.println("Digital 8"); }
 }
 
-String GetButtonTag(int route) {
+String GetButtonTag(int route, int selectedRoute) {
+  String SELECTED_BUTTON_KEY = "#SELECTED_BUTTON_KEY#";
   String text = "LED " + String(route);
+
+  String buttonTag = "<a href=\"" + String(route) + "\"><button #SELECTED_BUTTON_KEY#>" + text + "</button></a>";
   
-  if(route == D_0) { }
+  if(selectedRoute == route) { buttonTag.replace(SELECTED_BUTTON_KEY, "class=\"inverse\""); }
   
-  if(route == D_1) { }
-  if(route == D_2) { }
-  if(route == D_3) { }
-  if(route == D_4) { }
-  
-  if(route == D_5) { }
-  if(route == D_6) { }
-  if(route == D_7) { }
-  if(route == D_8) { }
-  
-  return "<a href=\"" + String(route) + "\"><button class=\"large\">" + text + "</button></a>";
+  return buttonTag;
 }
 
 //EOL
