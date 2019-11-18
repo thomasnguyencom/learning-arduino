@@ -128,25 +128,25 @@ void GetHtmlPage(int digitalPin){
   SetDigitalPin(digitalPin);
 
   ConfigureRoutes();
-  
-  String d0 = "<p><a href=\"" + String(D_0) + "\"><button class=\"large\">" + String(D_0) + "</button></a></p>";
-  
-  String d1 = "<p><a href=\"" + String(D_1) + "\"><button class=\"large\">" + String(D_1) + "</button></a></p>";
-  String d2 = "<p><a href=\"" + String(D_2) + "\"><button class=\"large\">" + String(D_2) + "</button></a></p>";
-  String d3 = "<p><a href=\"" + String(D_3) + "\"><button class=\"large\">" + String(D_3) + "</button></a></p>";
-  String d4 = "<p><a href=\"" + String(D_4) + "\"><button class=\"large\">" + String(D_4) + "</button></a></p>";
-  
-  String d5 = "<p><a href=\"" + String(D_5) + "\"><button class=\"large\">" + String(D_5) + "</button></a></p>";
-  String d6 = "<p><a href=\"" + String(D_6) + "\"><button class=\"large\">" + String(D_6) + "</button></a></p>";
-  String d7 = "<p><a href=\"" + String(D_7) + "\"><button class=\"large\">" + String(D_7) + "</button></a></p>";
-  String d8 = "<p><a href=\"" + String(D_8) + "\"><button class=\"large\">" + String(D_8) + "</button></a></p>";
+
+  String d0 = GetButtonTag(D_0);
+
+  String d1 = GetButtonTag(D_1);
+  String d2 = GetButtonTag(D_2);
+  String d3 = GetButtonTag(D_3);
+  String d4 = GetButtonTag(D_4);
+
+  String d5 = GetButtonTag(D_5);
+  String d6 = GetButtonTag(D_6);
+  String d7 = GetButtonTag(D_7);
+  String d8 = GetButtonTag(D_8);
 
   String d_1 = d1 + d2 + d3 + d4;
   String d_2 = d5 + d6 + d7 + d8;
 
   String off = "<a href=\"Off\"><button>OFF</button></a>";
   
-  String s = d0 + d_1 + d_2;
+  String s = "<p>" + d0 + "</p><p>" + d_1 + "</p><p>" + d_2 + "</p>";
 
   String headerTags = "<header><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css\"></header>";
   
@@ -171,18 +171,6 @@ void ConfigureRoutes() {
 }
 
 void SetDigitalPin(int digitalPin) {
-/* 
-  if(digitalPin == D_1) { digitalWrite( 5, HIGH); } else { digitalWrite( 5, LOW); }
-  if(digitalPin == D_2) { digitalWrite( 4, HIGH); } else { digitalWrite( 4, LOW); }
-  if(digitalPin == D_3) { digitalWrite( 0, HIGH); } else { digitalWrite( 0, LOW); }
-  if(digitalPin == D_4) { digitalWrite( 2, HIGH); } else { digitalWrite( 2, LOW); }
-  
-  if(digitalPin == D_5) { digitalWrite(14, HIGH); } else { digitalWrite(14, HIGH); }
-  if(digitalPin == D_6) { digitalWrite(12, HIGH); } else { digitalWrite(12, HIGH); }
-  if(digitalPin == D_7) { digitalWrite(13, HIGH); } else { digitalWrite(13, HIGH); }
-  if(digitalPin == D_8) { digitalWrite(15, HIGH); } else { digitalWrite(15, HIGH); }
-*/
-
   digitalWrite(pinMode_1, LOW);
   digitalWrite(pinMode_2, LOW);
   digitalWrite(pinMode_3, LOW);
@@ -202,6 +190,24 @@ void SetDigitalPin(int digitalPin) {
   if(digitalPin == D_6) { digitalWrite(pinMode_6, HIGH); Serial.println("Digital 6"); }
   if(digitalPin == D_7) { digitalWrite(pinMode_7, HIGH); Serial.println("Digital 7"); }
   if(digitalPin == D_8) { digitalWrite(pinMode_8, HIGH); Serial.println("Digital 8"); }
+}
+
+String GetButtonTag(int route) {
+  String text = "LED " + String(route);
+  
+  if(route == D_0) { }
+  
+  if(route == D_1) { }
+  if(route == D_2) { }
+  if(route == D_3) { }
+  if(route == D_4) { }
+  
+  if(route == D_5) { }
+  if(route == D_6) { }
+  if(route == D_7) { }
+  if(route == D_8) { }
+  
+  return "<a href=\"" + String(route) + "\"><button class=\"large\">" + text + "</button></a>";
 }
 
 //EOL
