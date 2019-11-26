@@ -81,7 +81,7 @@ String PALETTE_SPARKLES  = "Sparkles";
 // -[5V]  Connects to a +5V power supply
 // ------------------------------------------------------------------------------------------------------------------------
 #define UPDATES_PER_SECOND 100
-#define NUM_LEDS           10 //150
+#define NUM_LEDS           150 //150
 CRGB leds[NUM_LEDS];
 #define BRIGHTNESS         64
 #define LED_TYPE           WS2812B
