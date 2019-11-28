@@ -55,9 +55,10 @@ int D_15 = 15;
 
 CRGBPalette16 currentPalette;
 TBlendType    currentBlending = NOBLEND;
-String        currentPaletteName = "PALETTE_COLORFUL";
+String        currentPaletteName = "PALETTE_SLOWCHASE";
 int           currentPalettePointer = 0;
 
+String PALETTE_SLOWCHASE = "Slow Chase";
 String PALETTE_RANDOM    = "Random";
 String PALETTE_GLOW      = "Glow";
 String PALETTE_CANDYCANE = "Candy Cane";
@@ -217,7 +218,7 @@ void GetHtmlPage(int digitalPin){
 }
 
 String ConvertToPaletteName(int digitalPin) {
-  if(digitalPin == D_0) { return PALETTE_RANDOM; }
+  if(digitalPin == D_0) { return PALETTE_SLOWCHASE; }
   
   if(digitalPin == D_1) { return PALETTE_CANDYCANE; }
   if(digitalPin == D_2) { return PALETTE_AMERICA; }
@@ -324,7 +325,8 @@ String PalettePicker()
 // ------------------------------------------------------------------------------------------------------------------------
 String GetPalette(String paletteName)
 {
-  if( paletteName      == PALETTE_HOLIDAY)   { SetupHolidayPalette(); }
+  if( paletteName      == PALETTE_SLOWCHASE)   { SetupSlowChasePalette(); }
+  else if( paletteName == PALETTE_HOLIDAY)   { SetupHolidayPalette(); }
   else if( paletteName == PALETTE_SPARKLES)  { SetupSparklesPalette(); }
   else if( paletteName == PALETTE_CHASE)     { SetupChasePalette(); }
   else if( paletteName == PALETTE_COLORFUL)  { SetupColorfulPalette(); }
@@ -472,6 +474,24 @@ void SetupChasePalette()
     c_0, c_0, c_0, c_0,
     c_1, c_0, c_0, c_0,
     c_0, c_0, c_0, c_0
+  );
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// SetupSlowChasePalette
+// ------------------------------------------------------------------------------------------------------------------------
+void SetupSlowChasePalette()
+{
+  currentBlending = NOBLEND;
+  
+  CRGB c_white_ = CRGB( 100, 100, 100);
+  CRGB c_black_ = CRGB(   0,   0,   0);
+  
+  currentPalette = CRGBPalette16(
+    c_white_, c_black_, c_black_, c_black_,
+    c_black_, c_black_, c_black_, c_black_,
+    c_black_, c_black_, c_black_, c_black_,
+    c_black_, c_black_, c_black_, c_black_
   );
 }
 
