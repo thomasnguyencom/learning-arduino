@@ -31,34 +31,34 @@ ESP8266WebServer server(80);
 // GLOBAL
 // ========================================================================================================================
 // Global variables
-const String LED_STATE_KEY = "#LED_STATE_KEY#";
-
 CRGBPalette16 _currentPalette;
 TBlendType    _currentBlending     = NOBLEND;
-String        _currentPaletteName  = "PALETTE_SLOWCHASE";
-int           _currentPaletteSpeed = 100;
+String        _currentPaletteName  = "PALETTE_OFF";
+int           _currentPaletteSpeed = 5;
 
-String PALETTE_SLOWCHASE = "SlowChase";
-String PALETTE_RANDOM    = "Random";
-String PALETTE_GLOW      = "Glow";
-String PALETTE_CANDYCANE = "CandyCane";
-String PALETTE_COLORFUL  = "Colorful";  
-String PALETTE_HOLIDAY   = "Holiday";
-String PALETTE_CHASE     = "Chase";
-String PALETTE_SPARKLES  = "Sparkles";
-String PALETTE_AMERICA   = "America";
-String PALETTE_ZEBRA     = "Zebra";
-String PALETTE_RAINBOW1  = "RainbowColors"; //RainbowColors_p
-String PALETTE_RAINBOW2  = "RainbowStripeColors"; //RainbowStripeColors_p
-String PALETTE_OCEAN     = "Ocean"; //OceanColors_p
-String PALETTE_CLOUD     = "Cloud"; //CloudColors_p
-String PALETTE_LAVA      = "Lava"; //LavaColors_p
-String PALETTE_FOREST    = "Forest"; //ForestColors_p
-String PALETTE_PARTY     = "Party"; //PartyColors_p
+String PALETTE_OFF       = "off";
+String PALETTE_DRIP      = "drip";
+String PALETTE_RANDOM    = "random";
+String PALETTE_GLOW      = "glow";
+String PALETTE_CANDYCANE = "candycane";
+String PALETTE_COLORFUL  = "colorful";  
+String PALETTE_HOLIDAY   = "holiday";
+String PALETTE_CHASE     = "chase";
+String PALETTE_SPARKLES  = "sparkles";
+String PALETTE_AMERICA   = "america";
+String PALETTE_ZEBRA     = "zebra";
+String PALETTE_RAINBOW1  = "rainbowflow"; //RainbowColors_p
+String PALETTE_RAINBOW2  = "rainbow"; //RainbowStripeColors_p
+String PALETTE_OCEAN     = "ocean"; //OceanColors_p
+String PALETTE_CLOUD     = "cloud"; //CloudColors_p
+String PALETTE_LAVA      = "lava"; //LavaColors_p
+String PALETTE_FOREST    = "forest"; //ForestColors_p
+String PALETTE_PARTY     = "party"; //PartyColors_p
 
-const int _paletteCount = 16;
+const int _paletteCount = 17;
 String _palettes[_paletteCount] = {
-  PALETTE_SLOWCHASE,
+  PALETTE_OFF,
+  PALETTE_DRIP,
   PALETTE_CANDYCANE,
   PALETTE_AMERICA,
   PALETTE_COLORFUL,
@@ -66,7 +66,7 @@ String _palettes[_paletteCount] = {
   PALETTE_HOLIDAY,
   PALETTE_CHASE,
   PALETTE_ZEBRA,
-  PALETTE_CHASE,
+  PALETTE_RANDOM,
   PALETTE_RAINBOW1,
   PALETTE_RAINBOW2,
   PALETTE_OCEAN,
@@ -160,10 +160,10 @@ void loop(void){
   
   static uint8_t startIndex = 0;
   startIndex = startIndex + 1;    
-  FillLEDsFromPaletteColors( startIndex);
+  FillLEDsFromPaletteColors(startIndex);
   
   FastLED.show();
-  FastLED.delay(_currentPaletteSpeed);
+  FastLED.delay(ConvertSpeedToDelay(_currentPaletteSpeed));
 }
 
 // ========================================================================================================================
@@ -176,7 +176,6 @@ void ConfigureRoutes() {
     server.on(("/" + paletteName), [](){ GetHtmlPage(paletteName); } );
   }*/
 
-  
   server.on(("/" + _palettes[0]), [](){ GetHtmlPage(_palettes[0]); } );
   server.on(("/" + _palettes[1]), [](){ GetHtmlPage(_palettes[1]); } );
   server.on(("/" + _palettes[2]), [](){ GetHtmlPage(_palettes[2]); } );
@@ -193,42 +192,87 @@ void ConfigureRoutes() {
   server.on(("/" + _palettes[13]), [](){ GetHtmlPage(_palettes[13]); } );
   server.on(("/" + _palettes[14]), [](){ GetHtmlPage(_palettes[14]); } );
   server.on(("/" + _palettes[15]), [](){ GetHtmlPage(_palettes[15]); } );
+  server.on(("/" + _palettes[16]), [](){ GetHtmlPage(_palettes[16]); } );
 }
 
 void GetHtmlPage(String paletteName){
-  Serial.println("paletteName:" + paletteName);
-  SetupPalette(paletteName);
-  
+  _currentPaletteName = paletteName;
+
   ConfigureRoutes();
 
-  String b = "";
-  for(int i = 0; i <= _paletteCount; i++) {
-    b += GetButtonTag(_palettes[i], paletteName);
+  Serial.println("~/:" + paletteName);
+  SetupPalette(paletteName);
+
+  for (int i = 0; i < server.args(); i++) {
+    String key = server.argName(i);
+    String value = server.arg(i);
+
+    String message = "parameter[" + String(i) + "] –> " + key + ": " + value;
+    Serial.println(message);
+
+    HandleParameters(key, value);
   }
-  
-  String off = "<a href=\"Off\"><button>OFF</button></a>";
-  String buttons = "<p>" + b + "</p>";
-  String css = "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css\">";
+
+  int paletteSpeed = _currentPaletteSpeed;
+
+  String paletteButtons = "";
+  for(int i = 0; i <= _paletteCount; i++) {
+    paletteButtons += GetButtonTag(_palettes[i], paletteName, paletteSpeed);
+  }
+
+  String speedButtons = "";
+  for(int i = 1; i <= 5; i++) {
+    speedButtons += GetSpeedTag(i, paletteSpeed, paletteName);
+  }
+
+  String css = "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css\" />";
   String menu = "<a href=\"#\" class=\"logo\">Tom's Magic Lantern</a>";
   String headerTags = "<header>" + css + menu + "</header>";
-  String bodyTags = "<body>" + buttons + "<p>#LED_STATE_KEY#</p></body>";
-  
-  String pageTemplate = "<html>" + headerTags + bodyTags + "</html>";
-  pageTemplate.replace(LED_STATE_KEY, paletteName);
-  
-  String page = pageTemplate;
-  
+
+  String paletteRegion = "<p>" + paletteButtons + "</p>";
+  String speedRegion = "<p>" + speedButtons + "</p>";
+
+  String bodyTags = "<body>" + paletteRegion + speedRegion + " </body>";
+
+  String page = "<html>" + headerTags + bodyTags + "</html>";
+
   server.send(200, "text/html", page);
 }
 
-String GetButtonTag(String route, String selectedRoute) {
+void HandleParameters(String key, String value) {
+  if(key == "speed") { _currentPaletteSpeed = value.toInt(); }
+}
+
+String GetButtonTag(String paletteName, String selectedPaletteName, int paletteSpeed) {
   String SELECTED_BUTTON_KEY = "#SELECTED_BUTTON_KEY#";
 
-  String buttonTag = "<a href=\"" + route + "\"><button #SELECTED_BUTTON_KEY#>" + route + "</button></a>";
+  String buttonTag = "<a href=\"" + paletteName + "?speed=" + String(paletteSpeed) + "\"><button #SELECTED_BUTTON_KEY#>" + paletteName + "</button></a>";
   
-  if(selectedRoute == route) { buttonTag.replace(SELECTED_BUTTON_KEY, "class=\"inverse\""); }
+  if(selectedPaletteName == paletteName) { buttonTag.replace(SELECTED_BUTTON_KEY, "class=\"inverse\""); }
   
   return buttonTag;
+}
+
+String GetSpeedTag(int paletteSpeed, int selectedPaletteSpeed, String paletteName) {
+  String SELECTED_SPEED_KEY = "#SELECTED_SPEED_KEY#";
+  
+  String buttonTag = "<a href=\"" + paletteName + "?speed=" + String(paletteSpeed) + "\"><button #SELECTED_SPEED_KEY#>" + String(paletteSpeed) + "</button></a>";
+  
+  if(selectedPaletteSpeed == paletteSpeed) { buttonTag.replace(SELECTED_SPEED_KEY, "class=\"inverse\""); }
+  
+  return buttonTag;
+}
+
+int ConvertSpeedToDelay(int paletteSpeed) {
+  int delayMilliseconds = 0;
+  
+  if(_currentPaletteSpeed == 1) { delayMilliseconds = 100; }
+  if(_currentPaletteSpeed == 2) { delayMilliseconds = 75; }
+  if(_currentPaletteSpeed == 3) { delayMilliseconds = 50; }
+  if(_currentPaletteSpeed == 4) { delayMilliseconds = 10; }
+  if(_currentPaletteSpeed == 5) { delayMilliseconds = 0; }
+
+  return delayMilliseconds;
 }
 
 // ========================================================================================================================
@@ -253,9 +297,8 @@ void FillLEDsFromPaletteColors( uint8_t colorIndex)
 // ------------------------------------------------------------------------------------------------------------------------
 void SetupPalette(String paletteName)
 {
-  _currentPaletteName = paletteName;
-  
-  if(      paletteName == PALETTE_AMERICA)   { SetupAmericaPalette(); }
+  if(      paletteName == PALETTE_OFF)       { SetupOffPalette(); }
+  else if( paletteName == PALETTE_AMERICA)   { SetupAmericaPalette(); }
   else if( paletteName == PALETTE_CANDYCANE) { SetupCandyCanePalette(); }
   else if( paletteName == PALETTE_CHASE)     { SetupChasePalette(); }
   else if( paletteName == PALETTE_CLOUD)     { SetupDefaultPalette(PALETTE_CLOUD); }
@@ -269,10 +312,27 @@ void SetupPalette(String paletteName)
   else if( paletteName == PALETTE_RAINBOW1)  { SetupDefaultPalette(PALETTE_RAINBOW1); }
   else if( paletteName == PALETTE_RAINBOW2)  { SetupDefaultPalette(PALETTE_RAINBOW2); }
   else if( paletteName == PALETTE_RANDOM)    { SetupTotallyRandomPalette(); }
-  else if( paletteName == PALETTE_SLOWCHASE) { SetupSlowChasePalette(); }
+  else if( paletteName == PALETTE_DRIP)      { SetupSlowChasePalette(); }
   else if( paletteName == PALETTE_SPARKLES)  { SetupSparklesPalette(); }
   else if( paletteName == PALETTE_ZEBRA)     { SetupBlackAndWhiteStripedPalette(); }  
   else                                       { SetupSlowChasePalette(); }
+}
+
+// ------------------------------------------------------------------------------------------------------------------------
+// SetupOffPalette
+// ------------------------------------------------------------------------------------------------------------------------
+void SetupOffPalette()
+{
+  _currentBlending = NOBLEND;
+  
+  CRGB c_black_ = CRGB(   0,   0,   0);
+  
+  _currentPalette = CRGBPalette16(
+    c_black_, c_black_, c_black_, c_black_,
+    c_black_, c_black_, c_black_, c_black_,
+    c_black_, c_black_, c_black_, c_black_,
+    c_black_, c_black_, c_black_, c_black_
+  );
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -359,8 +419,8 @@ void SetupSparklesPalette()
 {
   _currentBlending = LINEARBLEND;
     
-  CRGB bright = CRGB(255, 255, 0);
-  CRGB medium = CRGB(253, 184, 19);
+  CRGB bright = CRGB(105, 105, 105);
+  CRGB medium = CRGB( 25,  25,  25);
   
   for( int i = 0; i < 16; i++) {
     int val = random8() % 2;
