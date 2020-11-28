@@ -1,30 +1,51 @@
-// ------------------------------------------------------------------------------------------------------------------------
-// https://randomnerdtutorials.com/guide-for-ws2812b-addressable-rgb-led-strip-with-arduino/
-// http://fastled.io/
-// ------------------------------------------------------------------------------------------------------------------------
-//https://github.com/FastLED/FastLED/wiki/ESP8266-notes
+//  Pick a pattern for LED strip
+//    Connect to WiFi
+//    Start Web Server
+//    Show page with buttons to pick LED pattern
+//
+//  Reference Links
+//    Creating a Simple NodeMCU Web Server: https://www.teachmemicro.com/simple-nodemcu-web-server/
+//    https://randomnerdtutorials.com/guide-for-ws2812b-addressable-rgb-led-strip-with-arduino/
+//    http://fastled.io/
+
+//  ------------------------------------------------------------------------------------------------------------------------
+//  INCLUDES
+
+//  https://github.com/FastLED/FastLED/wiki/ESP8266-notes
 #define FASTLED_ESP8266_RAW_PIN_ORDER
 #define FASTLED_ESP8266_NODEMCU_PIN_ORDER
 #define FASTLED_ESP8266_D1_PIN_ORDER
 #include <FastLED.h>
 
-// https://www.teachmemicro.com/simple-nodemcu-web-server/
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
-// Network contants
+//  ------------------------------------------------------------------------------------------------------------------------
+//  GLOBAL
+
+//  Network contants
 const char* ssid = "gorideabike";
 const char* password = "tomisthebomb";
+
+//  Find/Replace contants
 const String LED_STATE_KEY = "#LED_STATE_KEY#";
 
-//instantiate server at port 80 (http port)
+//  Instantiate server at port 80
 ESP8266WebServer server(80);
 
-// ========================================================================================================================
-// GLOBAL
-// ========================================================================================================================
-// Global variables
+//  ------------------------------------------------------------------------------------------------------------------------
+//  INIT : WS2811
+//  Wire configuration
+//    [GND] Connects to ground
+//    [DI]  (LED PIN) Add a 220 or 470 Ohm resistor between the Arduino digital output pin and  
+//      the strip data input pin to reduce noise on that line
+//    [5V]  Connects to a +5V power supply
+//  ------------------------------------------------------------------------------------------------------------------------
+
+//  Palette set up
+#define FAST_LED_PIN       15
+
 TBlendType    currentBlending;
 CRGBPalette16 currentPalette;
 String        currentPaletteName;
@@ -40,45 +61,23 @@ String PALETTE_MURCA = "murca";
 
 String _paletteName;
 
-// ========================================================================================================================
-// INITIALIZE HARDWARE
-// ========================================================================================================================
-
-// ------------------------------------------------------------------------------------------------------------------------
-// INIT : WS2811
-// ------------------------------------------------------------------------------------------------------------------------
-// Wire configuration
-// -[GND] Connects to ground
-// -[DI]  (LED PIN) Add a 220 or 470 Ohm resistor between the Arduino digital output pin and the strip data input pin to 
-//        reduce noise on that line.
-// -[5V]  Connects to a +5V power supply
-// ------------------------------------------------------------------------------------------------------------------------
 #define UPDATES_PER_SECOND 100
 #define NUM_LEDS           100
-CRGB leds[NUM_LEDS];
 #define BRIGHTNESS         64
 #define LED_TYPE           WS2811
 #define COLOR_ORDER        RGB // okay
+CRGB leds[NUM_LEDS];
 
-// Pin assignments
-#define FAST_LED_PIN       15
-
-// ========================================================================================================================
-// MAIN
-// ========================================================================================================================
-
-// ------------------------------------------------------------------------------------------------------------------------
-// setup
-// ------------------------------------------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------------------------------------------
 void setup(void){
-  // power-up safety delay
+  //  power-up safety delay
   delay(3000);
 
   Serial.begin(115200);
   WiFi.begin(ssid, password);
   Serial.println("");
 
-  // Wait for connection
+  //  Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -101,14 +100,15 @@ void setup(void){
   server.begin();
   Serial.println("Web server started!");
 
-  // Setup WS2812B Strip
+  //  Setup WS2812B Strip
   FastLED.addLeds<LED_TYPE, FAST_LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
-  //FastLED.setBrightness(  BRIGHTNESS );
 }
  
+//  ------------------------------------------------------------------------------------------------------------------------
 void loop(void){
   server.handleClient();
 
+  //  Process palette
   GetPalette(_paletteName);
   
   static uint8_t startIndex = 0;
@@ -119,6 +119,7 @@ void loop(void){
   FastLED.delay(1000 / UPDATES_PER_SECOND);
 }
 
+//  ------------------------------------------------------------------------------------------------------------------------
 void GetHtmlPage(String paletteName){
   _paletteName = paletteName;
 
@@ -148,6 +149,7 @@ void GetHtmlPage(String paletteName){
   server.send(200, "text/html", page);
 }
 
+//  ------------------------------------------------------------------------------------------------------------------------
 void ConfigureRoutes() {
   server.on(("/" + PALETTE_CANDYCANE), [](){ GetHtmlPage(PALETTE_CANDYCANE); } );
   server.on(("/" + PALETTE_GLOW)     , [](){ GetHtmlPage(PALETTE_GLOW); } );
@@ -159,12 +161,6 @@ void ConfigureRoutes() {
   server.on(("/" + PALETTE_CANDYCANE), [](){ GetHtmlPage(PALETTE_CANDYCANE); } );
 }
 
-// ========================================================================================================================
-// FUNCTIONS
-// ========================================================================================================================
-
-// ------------------------------------------------------------------------------------------------------------------------
-// FillLEDsFromPaletteColors
 // ------------------------------------------------------------------------------------------------------------------------
 void FillLEDsFromPaletteColors( uint8_t colorIndex)
 {
@@ -176,8 +172,6 @@ void FillLEDsFromPaletteColors( uint8_t colorIndex)
   }
 }
 
-// ------------------------------------------------------------------------------------------------------------------------
-// PalettePicker
 // ------------------------------------------------------------------------------------------------------------------------
 String PalettePicker()
 {
@@ -237,12 +231,6 @@ String PalettePicker()
   return displayTime + " " + displayPalette;
 }
 
-// ========================================================================================================================
-// PALETTE FUNCTIONS
-// ========================================================================================================================
-
-// ------------------------------------------------------------------------------------------------------------------------
-// GetPalette
 // ------------------------------------------------------------------------------------------------------------------------
 void GetPalette(String paletteName)
 {
@@ -283,8 +271,6 @@ void GetPalette(String paletteName)
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
-// SetupHolidayPalette
-// ------------------------------------------------------------------------------------------------------------------------
 void SetupHolidayPalette()
 {
   CRGB c_red___ = CHSV( HUE_RED, 255, 255);
@@ -299,8 +285,6 @@ void SetupHolidayPalette()
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
-// SetupCandyCanePalette
-// ------------------------------------------------------------------------------------------------------------------------
 void SetupCandyCanePalette()
 {
   CRGB c_red___ = CRGB(   0, 255,   0);
@@ -314,8 +298,6 @@ void SetupCandyCanePalette()
   );
 }
 
-// ------------------------------------------------------------------------------------------------------------------------
-// SetupColorfulPalette
 // ------------------------------------------------------------------------------------------------------------------------
 void SetupColorfulPalette()
 {
@@ -333,8 +315,6 @@ void SetupColorfulPalette()
   );
 }
 
-// ------------------------------------------------------------------------------------------------------------------------
-// SetupSparklesPalette
 // ------------------------------------------------------------------------------------------------------------------------
 void SetupSparklesPalette()
 {
@@ -354,8 +334,6 @@ void SetupSparklesPalette()
   }
 }
 
-// ------------------------------------------------------------------------------------------------------------------------
-// SetupChasePalette
 // ------------------------------------------------------------------------------------------------------------------------
 void SetupChasePalette()
 {
@@ -379,8 +357,6 @@ void SetupChasePalette()
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
-// SetupGlowPalette
-// ------------------------------------------------------------------------------------------------------------------------
 void SetupGlowPalette()
 {
   int r = 0;
@@ -401,8 +377,6 @@ void SetupGlowPalette()
   );
 }
 
-// ------------------------------------------------------------------------------------------------------------------------
-// MURCA
 // ------------------------------------------------------------------------------------------------------------------------
 void SetupColorfulMurca()
 {
