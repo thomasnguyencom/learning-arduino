@@ -17,21 +17,17 @@
 #endif
 
 #include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
+#include <BlynkSimpleEsp8266.h>
 
 //  ------------------------------------------------------------------------------------------------------------------------
 //  GLOBAL
 
 //  Network contants
 const char* ssid = "gorideabike";
-const char* password = "tomisthebomb";
+const char* pass = "tomisthebomb";
 
 //  Find/Replace contants
 const String LED_STATE_KEY = "#LED_STATE_KEY#";
-
-//  Instantiate server at port 80
-ESP8266WebServer server(80);
 
 //  ------------------------------------------------------------------------------------------------------------------------
 //  INIT : WS2811
@@ -52,16 +48,69 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
 
+//  Blynk setup
+#define BLYNK_PRINT Serial
+
+char auth[] = "oIRYZXmQ-sCl2zPjU_UQfCH1wVldhdia";
+
+int _colorR = 0;
+int _colorG = 0;
+int _colorB = 0;
+
+WidgetTerminal terminal(V1);
+
+// You can send commands from Terminal to your hardware. Just use
+// the same Virtual Pin as your Terminal Widget
+BLYNK_WRITE(V1)
+{
+  // if you type "Marco" into Terminal Widget - it will respond: "Polo:"
+  if (String("Marco") == param.asStr()) {
+    terminal.println("You said: 'Marco'") ;
+    terminal.println("I said: 'Polo'") ;
+  } else {
+
+    // Send it back
+    terminal.print("You said:");
+    terminal.write(param.getBuffer(), param.getLength());
+    terminal.println();
+  }
+
+  // Ensure everything is sent
+  terminal.flush();
+}
+
+BLYNK_WRITE(V2)
+{
+  _colorR = param.asInt();
+  
+  Serial.println("V2 Slider value is: " + String(_colorR));
+}
+
+BLYNK_WRITE(V3)
+{
+  _colorG = param.asInt();
+  
+  Serial.println("V3 Slider value is: " + String(_colorG));
+}
+
+BLYNK_WRITE(V4)
+{
+  _colorB = param.asInt();
+  
+  Serial.println("V4 Slider value is: " + String(_colorB));
+}
+
+
 //  ------------------------------------------------------------------------------------------------------------------------
 void setup(void){
   //  power-up safety delay
   delay(3000);
 
   Serial.begin(115200);
-  WiFi.begin(ssid, password);
-  Serial.println("");
+  Blynk.begin(auth, ssid, pass); //WiFi.begin(ssid, password);
+  Serial.println("Connected");
 
-  //  Wait for connection
+  /*  Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -76,14 +125,15 @@ void setup(void){
   server.on("/", [](){
     GetHtmlPage("");
   });
+  */
 
-  delay(1000);
+  terminal.clear();
+  terminal.println(F("Blynk v" BLYNK_VERSION ": Device started"));
+  terminal.println(F("-------------"));
+  terminal.println(F("Type 'Marco' and get a reply, or type"));
+  terminal.println(F("anything else and get it printed back."));
+  terminal.flush();
   
-  ConfigureRoutes();
-  
-  server.begin();
-  Serial.println("Web server started!");
-
   //  Setup WS2812B Strip
   
   // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
@@ -98,9 +148,11 @@ void setup(void){
  
 //  ------------------------------------------------------------------------------------------------------------------------
 void loop(void){
+  Blynk.run();
+  
   for (int i = 0; i < NUMPIXELS; i++)
   {
-    pixels.setPixelColor(i, pixels.Color(255, 147, 41));
+    pixels.setPixelColor(i, pixels.Color(_colorR, _colorG, _colorB));
   }
   
   pixels.show();
